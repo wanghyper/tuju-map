@@ -48,4 +48,4 @@ TujuMap.init(params: {type?: 'BMapGL', ak: string, userTocken?: any})
 
 其中 type 为要加载的基础地图类型，目前只有百度地图，此参数可缺省；ak 为地图脚本加载所需，百度地图需[申请](https://lbsyun.baidu.com/faq/search?id=299&title=677)，authConfig 为图聚接口校验使用，具体请看 API 部分
 
- 更多文档内容请看[docs](./docs/index.html)文件夹
+ 更多文档内容请看[文档](https://wanghyper.github.io/tuju-map/)
