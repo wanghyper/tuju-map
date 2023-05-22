@@ -1,0 +1,17 @@
+{
+    "name": "tuju-map",
+    "version": "0.0.4",
+    "description": "图聚前端能力SDK",
+    "type": "module",
+    "files": [
+        "dist"
+    ],
+    "main": "./dist/TujuMap.umd.cjs",
+    "module": "./dist/TujuMap.js",
+    "exports": {
+        ".": {
+            "import": "./dist/TujuMap.js",
+            "require": "./dist/TujuMap.umd.cjs"
+        }
+    }
+}
