@@ -3,6 +3,7 @@
 图聚地图类`TujuMap.Map`，使用该类创建一个地图到目标容器，返回 TujuMap.Map 实例。
 
 ## 创建地图实例
+
 ```js
 const map = new TujuMap.Map(container: string, config);
 const baseMap = map.baseMap; // 获得基础地图的能力，可以调用基础地图的全量API
@@ -84,6 +85,22 @@ interface ControlConfig {
 #### 获取当前地图可视范围
 
 `Map.getBounds()`
+
+#### 经纬度转墨卡托
+
+`Map.lnglatToMercator(lng: number, lat: number)`
+
+#### 墨卡托转经纬度
+
+`Map.mercatorToLnglat(x: number, y: number)`
+
+#### 屏幕像素位置转换为地图坐标
+
+`Map.pixelToPoint(x: number, y: number)`
+
+#### 地图坐标转换为屏幕像素位置
+
+`Map.pointToPixel(lng: number, lat: number)`
 
 ### 事件监听
 
