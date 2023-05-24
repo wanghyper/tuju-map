@@ -151,7 +151,7 @@ interface ControlConfig {
 Map.drawMarker(coordinates, config);
 Map.drawPolyline(coordinates, config);
 Map.drawPolygon(coordinates, config);
-Map.drawCircle(coordinates, config);
+Map.drawCircle(coordinates, radus, config);
 Map.drawLabel(coordinates, config);
 Map.drawHtml(coordinates, htmlDom, config);
 ```

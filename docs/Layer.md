@@ -85,7 +85,7 @@ interface LayerData {
 
 ## 各图层配置和数据结构
 
-为优化使用体验，对各图层的配置和数据结构做了统一处理，整体继承 LayerConfig 和 LayerData 基础结构。
+为优化使用体验，对各图层的配置和数据结构做了统一处理，整体继承 LayerConfig 和 LayerData 基础结构。每个数据中可以单独设置部分style属性，从而让该处的数据有单独的样式。
 
 ### TujuMap.PointLayer 点图层
 
@@ -170,7 +170,42 @@ interface TextLayerData extends LayerData {
     };
 }
 ```
+### TujuMap.LabelLayer 标签文字图层
 
+配置结构：
+
+```js
+interface LabelLayerConfig extends LayerConfig {
+    textColor?: string; // 标签文字颜色
+    borderColor?: string; // 标签边框颜色
+    backgroundColor?: string;// 标签背景颜色
+    pickedTextColor?: string;// 拾取时文字颜色
+    pickedBorderColor?: string;// 拾取时边框颜色
+    pickedBackgroundColor?: string;// 拾取时背景颜色
+    fontFamily?: string;// 文字字体
+    fontSize?: number;// 文字大仙
+    lineHeight?: number;// 文字行高
+    textAlign?: string;// 文字对齐方式，left right center
+    collides?: boolean;// 是否开启碰撞检测
+    offset?: number[];// 偏移量[x, y]
+    padding?: number[];// 内边距
+    borderRadius?: number;// 边框圆角
+}
+```
+
+数据结构：
+
+```js
+interface LabelLayerData extends LayerData {
+    coordinates: LngLat;
+    style?: {
+        text?: string;
+        textColor?: string;
+        borderColor?: string;
+        backgroundColor?: string;
+    };
+}
+```
 ### TujuMap.LineLayer 线图层
 
 配置结构：
@@ -252,5 +287,32 @@ interface ClusterLayerConfig extends LayerConfig {
 ```js
 interface ClusterLayerData extends LayerData {
     coordinates: LngLat;
+}
+```
+
+### TujuMap.HeatmapLayer 热力图层
+
+配置结构：
+
+```js
+interface HeatmapLayerConfig extends LayerConfig {
+    size: number; // 单个点绘制大小
+    unit?: string; // 单位，m:米，px: 像素
+    height?: number; // 最大高度，默认为0
+    max: number; // 最大阈值
+    min: number; // 最小阈值
+    minOpacity?: number; // 最小阈值透明度
+    maxOpacity?: number; // 最大阈值透明度
+    blend?: string; // 颜色混合方式 default lighter normal deeper
+    gradient?: Record<number, string>; // 颜色梯度， 0.25: 'rgba(89, 233, 179, 1)',0.55: 'rgba(182, 243, 147, 1)',0.85: 'rgba(254, 255, 140, 1)',0.9: 'rgba(217, 29, 28, 1)',
+}
+```
+
+数据结构：
+
+```js
+interface HeatmapLayerData extends LayerData {
+    coordinates: LngLat;
+    count: number; // 该点的值
 }
 ```

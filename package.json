@@ -1,6 +1,6 @@
 {
     "name": "tuju-map",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "图聚前端能力SDK",
     "type": "module",
     "repository": {
@@ -17,5 +17,8 @@
             "import": "./dist/TujuMap.js",
             "require": "./dist/TujuMap.umd.cjs"
         }
+    },
+    "dependencies": {
+        "@types/bmapgl": "^0.0.7"
     }
 }
