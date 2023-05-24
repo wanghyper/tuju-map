@@ -60,7 +60,7 @@ interface DrawConfig {
     drawingToolOptions?: {
         anchor: number;
         scale: number;
-        drawingModes: number[];
+        drawingModes: string[];
         offset: number[];
     };
 }
