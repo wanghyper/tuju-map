@@ -147,13 +147,23 @@ interface ControlConfig {
 
 通过实例化的 Map 对象可以直接进行地图绘制点线面等覆盖物，每个函数都会返回绘制后的覆盖物对象，进行后续操作
 
-```js
-Map.drawMarker(coordinates, config);
-Map.drawPolyline(coordinates, config);
-Map.drawPolygon(coordinates, config);
-Map.drawCircle(coordinates, radus, config);
-Map.drawLabel(coordinates, config);
-Map.drawHtml(coordinates, htmlDom, config);
+```ts
+// 普通覆盖物
+Map.drawMarker(point: Point, config?: BMapGL.MarkerOptions);
+Map.drawIcon(point: Point, config: IconOptions)
+Map.drawPolyline(point: Point[], config?: BMapGL.PolylineOptions);
+Map.drawPolygon(point: Point[], config?: BMapGL.PolygonOptions);
+Map.drawCircle(point: Point, radius: number, config?: BMapGL.PolylineOptions & {fillColor: string});
+Map.drawLabel(text: string, position: Point, config: {offset?: number[], style?: Record<string, any>} = {});
+
+// 自定义overlay，drawHtml使用的是BMapGL.CustomOverlay，drawCustomOverlay使用的是SDK自己实现的类
+Map.drawHtml(point: Point, content: (() => HTMLElement) | HTMLElement, config?: any);
+Map.drawCustomOverlay(point: Point, html: HTMLElement | string, style?: any)
+
+// 信息窗
+Map.createInfoWindow(content: string | HTMLElement, config?: BMapGL.InfoWindowOptions)
+Map.openInfoWindow(infoWindow: BMapGL.InfoWindow, position: Point)
+Map. closeInfoWindow()
 ```
 
 #### 覆盖物方法

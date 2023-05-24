@@ -1,17 +1,24 @@
 {
     "name": "tuju-map",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "图聚前端能力SDK",
+    "keywords": [
+        "map",
+        "bmapgl",
+        "mapvgl"
+    ],
     "type": "module",
     "repository": {
         "type": "git",
         "url": "https://github.com/wanghyper/tuju-map.git"
     },
     "files": [
-        "dist"
+        "dist",
+        "types"
     ],
     "main": "./dist/TujuMap.umd.cjs",
     "module": "./dist/TujuMap.js",
+    "types": "types/main.d.ts",
     "exports": {
         ".": {
             "import": "./dist/TujuMap.js",

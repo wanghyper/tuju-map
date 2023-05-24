@@ -1,4 +1,5 @@
 -   [开始使用](/)
 -   [创建地图](Map.md)
+-   [绘制工具](DrawingTool.md)
 -   [MapvGL 图层](Layer.md)
 -   [图聚平台接口](API.md)

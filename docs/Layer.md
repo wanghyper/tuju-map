@@ -316,3 +316,28 @@ interface HeatmapLayerData extends LayerData {
     count: number; // 该点的值
 }
 ```
+### TujuMap.GridLayer 网格图层
+
+配置结构：
+
+```js
+interface GridLayerConfig extends LayerConfig {
+    style?: string; // 网格形式，默认'grid'会对点进行网格聚合，'normal'直接按所在点画一个网格
+    gridSize: number; // 网格的边长，单位米
+    gridGap?: number; // 网格间隙，单位米
+    color?: string | ((item: {count: number; color: string | undefined}) => string); // 网格颜色，支持函数，item为每个点的部分属性对象
+    height?: number | ((item: {count: number; coordinates: number[]}) => number); // 网格高度，支持函数，item为每个点的部分属性对象
+    textOptions?: {
+        show: boolean; // 是否显示文字
+    } & TextLayerConfig; // 可使用文字图层配置
+}
+```
+
+数据结构：
+
+```js
+interface GridLayerData extends LayerData {
+    coordinates: LngLat;
+    count: number; // 该点的值
+}
+```
