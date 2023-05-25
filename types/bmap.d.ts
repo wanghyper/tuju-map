@@ -18,7 +18,7 @@ declare namespace BMapGL {
         );
     }
 }
-type Point = number[] | BMapGL.Point;
+type TujuPoint = number[] | BMapGL.Point;
 // icon覆盖物参数
 type IconOptions = Omit<BMapGL.MarkerOptions, 'icon'> &
     BMapGL.IconOptions & {
@@ -28,8 +28,8 @@ type IconOptions = Omit<BMapGL.MarkerOptions, 'icon'> &
 // 控件通用参数
 interface ControlConfig {
     show?: boolean; // 是否加载
-    offset?: Point; // 相对偏移量
-    anchor?: number;
+    offset?: number[]; // 相对偏移量
+    anchor?: number[];
 }
 
 interface MapParamas {

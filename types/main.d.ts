@@ -7,61 +7,85 @@ declare module 'tuju-map' {
         polygon: BMapGL.DrawingType;
         circle: BMapGL.DrawingType;
     };
-    LayerTypes;
+    declare const LayerTypes: {
+        POINT: number;
+        LINE: number;
+        POLYGON: number;
+        ICON: number;
+        TEXT: number;
+        LABEL: number;
+        CLUSTER: number;
+        HEATMAP: number;
+        GRID: number;
+        HONEYCOMB: number;
+    };
     class Map {
         constructor(container: string, params: MapParamas);
         // 底图样式设置
-        setMapStyleV2(style: BMapGL.MapStyleV2) {}
+        setMapStyleV2(style: BMapGL.MapStyleV2): void;
         // 覆盖物
-        addOverlay(overlay: BMapGL.Overlay) {}
-        removeOverlay(overlay: BMapGL.Overlay) {}
-        getOverlays() {}
-        clearOverlays() {}
-        drawMarker(point: Point, config?: BMapGL.MarkerOptions) {}
-        drawIcon(point: Point, config: IconOptions) {}
-        drawLabel(text: string, position: Point, config: {offset?: number[]; style?: Record<string, any>} = {}) {}
-        drawCircle(point: Point, radius: number, config?: BMapGL.PolylineOptions & {fillColor: string}) {}
-        drawPolyline(point: Point[], config?: BMapGL.PolylineOptions) {}
-        drawPolygon(point: Point[], config?: BMapGL.PolygonOptions) {}
-        drawCustomOverlay(point: Point, html: HTMLElement | string, style?: any) {}
-        drawHtml(point: Point, content: (() => HTMLElement) | HTMLElement, config?: any) {}
+        addOverlay(overlay: BMapGL.Overlay): void;
+        removeOverlay(overlay: BMapGL.Overlay): void;
+        getOverlays(): BMapGL.Overlay[];
+        clearOverlays(): void;
+        drawMarker(point: TujuPoint, config?: BMapGL.MarkerOptions): BMapGL.Marker;
+        drawIcon(point: TujuPoint, config: IconOptions): BMapGL.Marker;
+        drawLabel(
+            text: string,
+            position: TujuPoint,
+            config?: {
+                offset?: number[];
+                style?: Record<string, any>;
+            }
+        ): BMapGL.Label;
+        drawCircle(
+            point: TujuPoint,
+            radius: number,
+            config?: BMapGL.PolylineOptions & {
+                fillColor: string;
+            }
+        ): BMapGL.Circle;
+        drawPolyline(point: TujuPoint[], config?: BMapGL.PolylineOptions): BMapGL.Polyline;
+        drawPolygon(point: TujuPoint[], config?: BMapGL.PolygonOptions): BMapGL.Polygon;
+        drawCustomOverlay(point: TujuPoint, html: HTMLElement | string, style?: any): BMapGL.Overlay;
+        drawHtml(point: TujuPoint, content: (() => HTMLElement) | HTMLElement, config?: any): BMapGL.CustomOverlay;
         // 创建信息窗
-        createInfoWindow(content: string | HTMLElement, config?: BMapGL.InfoWindowOptions) {}
+        createInfoWindow(content: string | HTMLElement, config?: BMapGL.InfoWindowOptions): BMapGL.InfoWindow;
         // 打开目标信息框
-        openInfoWindow(infoWindow: BMapGL.InfoWindow, position: Point) {}
+        openInfoWindow(infoWindow: BMapGL.InfoWindow, position: TujuPoint): void;
         // 关闭信息框
-        closeInfoWindow() {}
+        openInfoWindow(infoWindow: BMapGL.InfoWindow, position: TujuPoint): void;
         // 地图状态
-        setZoom(zoom: number) {}
-        setCenter(center: [number, number] | BMapGL.Point) {}
-        setViewport(points: Point[], config?: BMapGL.ViewportOptions) {}
-        setCenterAndZoom(center: Point, zoom: number) {}
-        setDisplayOptions(optins: any) {}
-        getZoom() {}
-        getZoomUnits() {}
-        getCenter() {}
-        getBounds() {}
+        setZoom(zoom: number): void;
+        setCenter(center: [number, number] | BMapGL.Point): void;
+        setViewport(points: TujuPoint[], config?: BMapGL.ViewportOptions): void;
+        setCenterAndZoom(center: TujuPoint, zoom: number): void;
+        setDisplayOptions(optins: any): void;
+        getZoom(): number;
+        getZoomUnits(): number;
+        getCenter(): BMapGL.Point;
+        getBounds(): BMapGL.Bounds;
         // 事件
-        on(event: string, handler: BMapGL.Callback);
-        addEventListener(event: string, handler: BMapGL.Callback);
-        removeEventListener(event: string, handler: BMapGL.Callback);
+        on(event: string, handler: BMapGL.Callback): void;
+        addEventListener(event: string, handler: BMapGL.Callback): void;
+        removeEventListener(event: string, handler: BMapGL.Callback): void;
         // 室内图
-        createIndoorRoute(config?: {server: string})
+        createIndoorRoute(config?: {server: string});
         getIndoorManager();
         getIndoorInfo();
-        showIndoor(uid: string, index: number);
-        setIndoorFloor(floor: number | string);
+        showIndoor(uid: string, index: number): void;
+        setIndoorFloor(floor: number | string): void;
         // 路径规划
         /**
          * @description 创建步行规划实例
          */
-        createWalkRoute();
-        createDrivingRoute();
+        createWalkRoute(): WalkRoute;
+        createDrivingRoute(): DrivingRoute;
 
         /**
          * @description 获取绘制工具示例
          */
-        createMapDraw(config?: DrawConfig);
+        createMapDraw(config?: DrawConfig): Draw;
         /**
          * @description 根据位置获取地图poi信息
          */
@@ -71,12 +95,12 @@ declare module 'tuju-map' {
          * @description 经纬度转墨卡托
          * @returns mercator number[]
          */
-        lnglatToMercator(lng: number, lat: number);
+        lnglatToMercator(lng: number, lat: number): number[];
         /**
          * @description 墨卡托转经纬度
          * @returns lnglat number[]
          */
-        mercatorToLnglat(x: number, y: number): {lng: number; lat: number};
+        mercatorToLnglat(x: number, y: number): number[];
         /**
          * @description 屏幕像素位置转换为地图坐标
          * @returns BMapGL.Point
@@ -198,4 +222,5 @@ declare module 'tuju-map' {
             server?: string
         ): Promise<APIResponse>;
     };
+    GeoUtils;
 }
