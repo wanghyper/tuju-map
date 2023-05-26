@@ -29,7 +29,7 @@ type IconOptions = Omit<BMapGL.MarkerOptions, 'icon'> &
 interface ControlConfig {
     show?: boolean; // 是否加载
     offset?: number[]; // 相对偏移量
-    anchor?: number[];
+    anchor?: number;
 }
 
 interface MapParamas {

@@ -85,7 +85,7 @@ interface LayerData {
 
 ## 各图层配置和数据结构
 
-为优化使用体验，对各图层的配置和数据结构做了统一处理，整体继承 LayerConfig 和 LayerData 基础结构。每个数据中可以单独设置部分style属性，从而让该处的数据有单独的样式。
+为优化使用体验，对各图层的配置和数据结构做了统一处理，整体继承 LayerConfig 和 LayerData 基础结构。每个数据中可以单独设置部分 style 属性，从而让该处的数据有单独的样式。
 
 ### TujuMap.PointLayer 点图层
 
@@ -170,6 +170,7 @@ interface TextLayerData extends LayerData {
     };
 }
 ```
+
 ### TujuMap.LabelLayer 标签文字图层
 
 配置结构：
@@ -178,18 +179,18 @@ interface TextLayerData extends LayerData {
 interface LabelLayerConfig extends LayerConfig {
     textColor?: string; // 标签文字颜色
     borderColor?: string; // 标签边框颜色
-    backgroundColor?: string;// 标签背景颜色
-    pickedTextColor?: string;// 拾取时文字颜色
-    pickedBorderColor?: string;// 拾取时边框颜色
-    pickedBackgroundColor?: string;// 拾取时背景颜色
-    fontFamily?: string;// 文字字体
-    fontSize?: number;// 文字大仙
-    lineHeight?: number;// 文字行高
-    textAlign?: string;// 文字对齐方式，left right center
-    collides?: boolean;// 是否开启碰撞检测
-    offset?: number[];// 偏移量[x, y]
-    padding?: number[];// 内边距
-    borderRadius?: number;// 边框圆角
+    backgroundColor?: string; // 标签背景颜色
+    pickedTextColor?: string; // 拾取时文字颜色
+    pickedBorderColor?: string; // 拾取时边框颜色
+    pickedBackgroundColor?: string; // 拾取时背景颜色
+    fontFamily?: string; // 文字字体
+    fontSize?: number; // 文字大仙
+    lineHeight?: number; // 文字行高
+    textAlign?: string; // 文字对齐方式，left right center
+    collides?: boolean; // 是否开启碰撞检测
+    offset?: number[]; // 偏移量[x, y]
+    padding?: number[]; // 内边距
+    borderRadius?: number; // 边框圆角
 }
 ```
 
@@ -199,13 +200,14 @@ interface LabelLayerConfig extends LayerConfig {
 interface LabelLayerData extends LayerData {
     coordinates: LngLat;
     style?: {
-        text?: string;
-        textColor?: string;
-        borderColor?: string;
-        backgroundColor?: string;
+        text?: string,
+        textColor?: string,
+        borderColor?: string,
+        backgroundColor?: string,
     };
 }
 ```
+
 ### TujuMap.LineLayer 线图层
 
 配置结构：
@@ -254,6 +256,7 @@ interface PolygonLayerData extends LayerData {
     };
 }
 ```
+
 ### TujuMap.ClusterLayer 点聚合图层
 
 配置结构：
@@ -268,17 +271,17 @@ interface ClusterLayerConfig extends LayerConfig {
     gradient?: Record<number, string>; // 聚合点颜色梯度
     maxZoom?: number; // 聚合的最大级别，当地图放大级别高于此值将不再聚合
     minZoom?: number; // 聚合的最小级别，当地图放大级别低于此值将不再聚合
+    extent?: number; // 聚合后的密集程度，越大越密集
     // 是否显示文字
     showText?: true;
     // 开始聚合的最少点数，点数多于此值才会被聚合
     minPoints?: number;
-    // 设置文字样式
-    textOptions?: {
-        fontSize?: number;
-        color?: string;
+    // 设置文字样式，可使用TextLayer所有配置
+    textOptions?: TextLayerConfig & {
         // 格式化数字显示
-        format?: (count: any) => string | number;
+        format?: (count: any) => string | number,
     };
+    beforeRender?: (item: any) => boolean; // 如果需要自定义聚合前渲染，可以配置此项，传入值为当前聚合层级的数据。显式地返回false可以阻止默认的渲染，否则默认还会被渲染
 }
 ```
 
@@ -287,6 +290,49 @@ interface ClusterLayerConfig extends LayerConfig {
 ```js
 interface ClusterLayerData extends LayerData {
     coordinates: LngLat;
+    style: {
+        icon?: string, // 未聚合时的图片
+        width?: number, // 未聚合时的图片宽度
+        height?: number, // 未聚合时的图片高度
+        size?: string, // 未聚合时的点大小
+    };
+}
+```
+
+### TujuMap.IconClusterLayer 图片聚合图层
+
+配置结构：
+
+```js
+interface IconClusterLayerConfig extends LayerConfig {
+    clusterRadius: number; // 聚合范围半径
+    maxZoom?: number; // 聚合的最大级别，当地图放大级别高于此值将不再聚合
+    minZoom?: number; // 聚合的最小级别，当地图放大级别低于此值将不再聚合
+    extent?: number; // 聚合后的密集程度，越大越密集
+    // 是否显示文字
+    showText?: boolean;
+    // 开始聚合的最少点数，点数多于此值才会被聚合
+    minPoints?: number;
+    // 设置文字样式，可使用TextLayer所有配置
+    textOptions?: TextLayerConfig & {
+        // 格式化数字显示
+        format?: (count: any) => string | number,
+    };
+    iconOptions?: IconLayerConfig; // 可使用IconLayer的配置
+    iconExtent: Record<number, string>; // 图片梯度配置
+}
+```
+
+数据结构：
+
+```js
+interface IconClusterLayerData extends LayerData {
+    coordinates: LngLat;
+    style?: {
+        icon?: string, // 未聚合时的图片
+        width?: number, // 未聚合时的图片宽度
+        height?: number, // 未聚合时的图片高度
+    };
 }
 ```
 
@@ -316,6 +362,7 @@ interface HeatmapLayerData extends LayerData {
     count: number; // 该点的值
 }
 ```
+
 ### TujuMap.GridLayer 网格图层
 
 配置结构：
@@ -325,10 +372,10 @@ interface GridLayerConfig extends LayerConfig {
     style?: string; // 网格形式，默认'grid'会对点进行网格聚合，'normal'直接按所在点画一个网格
     gridSize: number; // 网格的边长，单位米
     gridGap?: number; // 网格间隙，单位米
-    color?: string | ((item: {count: number; color: string | undefined}) => string); // 网格颜色，支持函数，item为每个点的部分属性对象
-    height?: number | ((item: {count: number; coordinates: number[]}) => number); // 网格高度，支持函数，item为每个点的部分属性对象
+    color?: string | ((item: {count: number, color: string | undefined}) => string); // 网格颜色，支持函数，item为每个点的部分属性对象
+    height?: number | ((item: {count: number, coordinates: number[]}) => number); // 网格高度，支持函数，item为每个点的部分属性对象
     textOptions?: {
-        show: boolean; // 是否显示文字
+        show: boolean, // 是否显示文字
     } & TextLayerConfig; // 可使用文字图层配置
 }
 ```

@@ -46,17 +46,34 @@ interface ClusterLayerConfig extends LayerConfig {
     gradient?: Record<number, string>; // 聚合点颜色梯度
     maxZoom?: number; // 聚合的最大级别，当地图放大级别高于此值将不再聚合
     minZoom?: number; // 聚合的最小级别，当地图放大级别低于此值将不再聚合
+    extent?: number; // 聚合后的密集程度，越大越密集
     // 是否显示文字
     showText?: true;
     // 开始聚合的最少点数，点数多于此值才会被聚合
     minPoints?: number;
-    // 设置文字样式
-    textOptions?: {
-        fontSize?: number;
-        color?: string;
+    // 设置文字样式，可使用TextLayer所有配置
+    textOptions?: TextLayerConfig & {
         // 格式化数字显示
         format?: (count: any) => string | number;
     };
+    beforeRender?: (item: any) => boolean; // 如果需要自定义聚合前渲染，可以配置此项，传入值为当前聚合层级的数据。显式地返回false可以阻止默认的渲染，否则默认还会被渲染
+}
+interface IconClusterLayerConfig extends LayerConfig {
+    clusterRadius: number; // 聚合范围半径
+    maxZoom?: number; // 聚合的最大级别，当地图放大级别高于此值将不再聚合
+    minZoom?: number; // 聚合的最小级别，当地图放大级别低于此值将不再聚合
+    extent?: number; // 聚合后的密集程度，越大越密集
+    // 是否显示文字
+    showText?: boolean;
+    // 开始聚合的最少点数，点数多于此值才会被聚合
+    minPoints?: number;
+    // 设置文字样式，可使用TextLayer所有配置
+    textOptions?: TextLayerConfig & {
+        // 格式化数字显示
+        format?: (count: any) => string | number;
+    };
+    iconOptions?: IconLayerConfig; // 可使用IconLayer的配置
+    iconExtent: Record<number, string>; // 图片梯度配置
 }
 interface PolygonLayerConfig extends LayerConfig {
     blend?: 'default' | 'deeper' | 'normal' | 'lighter'; // 混合模式
@@ -105,9 +122,10 @@ interface GridLayerConfig extends LayerConfig {
 
 // 图层数据
 interface LayerData {
-    style?: any;
-    coordinates: any[];
-    extra?: any;
+    style?: any; // 对应该数据的样式
+    coordinates: any[]; // 坐标数据
+    extra?: any; // 用于挂载额外的信息，会在点击等事件触发时带上
+    [x: string]: any;
 }
 
 interface PointLayerData extends LayerData {
@@ -160,6 +178,20 @@ interface LabelLayerData extends LayerData {
 }
 interface ClusterLayerData extends LayerData {
     coordinates: LngLat;
+    style: {
+        icon?: string; // 未聚合时的图片
+        width?: number; // 未聚合时的图片宽度
+        height?: number; // 未聚合时的图片高度
+        size?: string; // 未聚合时的点大小
+    };
+}
+interface IconClusterLayerData extends LayerData {
+    coordinates: LngLat;
+    style?: {
+        icon?: string; // 未聚合时的图片
+        width?: number; // 未聚合时的图片宽度
+        height?: number; // 未聚合时的图片高度
+    };
 }
 interface HeatmapLayerData extends LayerData {
     coordinates: LngLat;

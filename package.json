@@ -1,6 +1,6 @@
 {
     "name": "tuju-map",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "description": "图聚前端能力SDK",
     "keywords": [
         "map",
@@ -24,6 +24,10 @@
             "import": "./dist/TujuMap.js",
             "require": "./dist/TujuMap.umd.cjs",
             "types": "./types/main.d.ts"
+        },
+        "./dist/": {
+            "import": "./dist/",
+            "require": "./dist/"
         }
     },
     "dependencies": {

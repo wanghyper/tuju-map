@@ -170,8 +170,14 @@ Map. closeInfoWindow()
 
 目前返回的均为百度地图的覆盖物实例，[类方法地址](https://mapopen-pub-jsapi.bj.bcebos.com/jsapi/reference/jsapi_webgl_1_0.html#a3b0)
 
+#### 覆盖物添加
+
+调用绘制覆盖物方法的时候，方法内部会直接将覆盖物添加到地图中，如果要手动再次添加，调用一下方法
+`Map.addOverlay(overlay)`
+
 #### 覆盖物删除
 
+传入覆盖物实例可以进行覆盖物的删除和清空
 删除指定覆盖物
 `Map.removeOverlay(overlay)`
 清空地图覆盖物
