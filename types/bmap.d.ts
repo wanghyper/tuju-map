@@ -4,18 +4,18 @@ declare namespace BMapGL {
     }
     class CustomOverlay extends BMapGL.Overlay {
         constructor(
-            createDOM: () => HTMLElement,
-            config: {
+            createDom: (config?: any) => HTMLElement,
+            config: CustomHtmlLayerConfig & {
                 point: Point; //覆盖物的经纬度，必填
-                offsetX: number; //覆盖物水平偏移量
-                offsetY: number; //覆盖物垂直偏移量
-                MinZoom: number; //最小显示层级
-                MaxZoom: number; //最大显示层级
-                properties: object; //自绑定属性
-                enableMassClear: boolean; //是否能被统一清除掉覆盖物
-                enableDraggingMap: boolean; //是否可以在覆盖物位置拖拽地图
             }
         );
+        show();
+        hide();
+    }
+    class CustomHtmlLayer extends BMapGL.Overlay {
+        constructor(createDom: (config?: any) => HTMLElement, config?: CustomHtmlLayerConfig);
+        show();
+        hide();
     }
 }
 type TujuPoint = number[] | BMapGL.Point;
@@ -64,3 +64,28 @@ interface DrawConfig {
         offset: number[];
     };
 }
+interface CustomHtmlLayerConfig {
+    offsetX?: number; //覆盖物水平偏移量
+    offsetY?: number; //覆盖物垂直偏移量
+    minZoom?: number; //最小显示层级
+    maxZoom?: number; //最大显示层级
+    properties?: object; //自绑定属性
+    enableMassClear?: boolean; //是否能被统一清除掉覆盖物
+    enableDraggingMap: boolean; //是否可以在覆盖物位置拖拽地图
+}
+type CustomOverlaysData = Array<{coordinates: TujuPoint; properties?: any}>;
+declare class CustomOverlays {
+    overlay: BMapGL.CustomHtmlLayer;
+    constructor(createDom: (config: any) => HTMLElement, options?: CustomHtmlLayerConfig);
+    setData(data: CustomOverlaysData);
+    show();
+    hide();
+    removeOverlay(cusItem: BMapGL.CustomOverlay | string);
+    // 删除该图层上所有的覆盖物（不释放图层实例）
+    removeAllOverlays();
+    // Array<CustomOverlay> 获取当前图层所有的自定义覆盖物
+    getCustomOverlays();
+    addEventListener(type: string, listener: EventListener);
+    removeEventListener(type: string, listener: EventListener);
+}
+

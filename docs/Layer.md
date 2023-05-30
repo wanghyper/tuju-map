@@ -48,6 +48,9 @@ const pointLayer = view.add(
     `layer.setData(data: LayerData[])`
 -   设置图层配置项
     `layer.setConfig(config: LayerConfig)`
+-   显隐设置
+    `show()`
+    `hide()`
 -   视角定位到图层
     ```js
     layer.flyToViewport(config?: ViewportConfig)

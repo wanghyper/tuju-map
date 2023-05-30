@@ -32,6 +32,8 @@ declare module 'tuju-map' {
         // 覆盖物
         addOverlay(overlay: BMapGL.Overlay): void;
         removeOverlay(overlay: BMapGL.Overlay): void;
+        addCustomHtmlLayer(cusLayer: CustomOverlays);
+        removeCustomHtmlLayer(cusLayer: CustomOverlays);
         getOverlays(): BMapGL.Overlay[];
         clearOverlays(): void;
         drawMarker(point: TujuPoint, config?: BMapGL.MarkerOptions): BMapGL.Marker;
@@ -55,6 +57,8 @@ declare module 'tuju-map' {
         drawPolygon(point: TujuPoint[], config?: BMapGL.PolygonOptions): BMapGL.Polygon;
         drawCustomOverlay(point: TujuPoint, html: HTMLElement | string, style?: any): BMapGL.Overlay;
         drawHtml(point: TujuPoint, content: (() => HTMLElement) | HTMLElement, config?: any): BMapGL.CustomOverlay;
+        // 创建多覆盖物图层
+        createCustomOverlays(createDom: (config: any) => HTMLElement, options?: CustomHtmlLayerConfig): CustomOverlays;
         // 创建信息窗
         createInfoWindow(content: string | HTMLElement, config?: BMapGL.InfoWindowOptions): BMapGL.InfoWindow;
         // 打开目标信息框
@@ -305,4 +309,10 @@ declare module 'tuju-map' {
          */
         isPolylineIntersectArea(lines: any, polygon: any): boolean;
     };
+    function wktToGeojson(wkt: string): any;
+    class Request {
+        constructor(config?: {baseUrl?: string});
+        get(url: string, config?: AxiosRequestConfig<any> | undefined): Promise<APIResponse>;
+        post(url: string, data?: any, config?: AxiosRequestConfig<any> | undefined): Promise<APIResponse>;
+    }
 }

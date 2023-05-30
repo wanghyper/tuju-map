@@ -40,6 +40,9 @@ interface ControlConfig {
 ### 关于坐标
 
 为方便使用，SDK 坐标可以直接使用数组形式，例如[116, 38]，第一位为经度，第二位为纬度。
+```js
+type TujuPoint = number[] | BMapGL.Point;
+```
 
 ### 关于控件位置
 
@@ -148,22 +151,73 @@ interface ControlConfig {
 通过实例化的 Map 对象可以直接进行地图绘制点线面等覆盖物，每个函数都会返回绘制后的覆盖物对象，进行后续操作
 
 ```ts
-// 普通覆盖物
-Map.drawMarker(point: Point, config?: BMapGL.MarkerOptions);
-Map.drawIcon(point: Point, config: IconOptions)
-Map.drawPolyline(point: Point[], config?: BMapGL.PolylineOptions);
-Map.drawPolygon(point: Point[], config?: BMapGL.PolygonOptions);
-Map.drawCircle(point: Point, radius: number, config?: BMapGL.PolylineOptions & {fillColor: string});
-Map.drawLabel(text: string, position: Point, config: {offset?: number[], style?: Record<string, any>} = {});
+class Map {
+    // 普通覆盖物
+    drawMarker(point: TujuPoint, config?: BMapGL.MarkerOptions): BMapGL.Marker;
+    drawIcon(point: TujuPoint, config: IconOptions): BMapGL.Marker;
+    drawLabel(
+        text: string,
+        position: TujuPoint,
+        config?: {
+            offset?: number[];
+            style?: Record<string, any>;
+        }
+    ): BMapGL.Label;
+    drawCircle(
+        point: TujuPoint,
+        radius: number,
+        config?: BMapGL.PolylineOptions & {
+            fillColor: string;
+        }
+    ): BMapGL.Circle;
+    drawPolyline(point: TujuPoint[], config?: BMapGL.PolylineOptions): BMapGL.Polyline;
+    drawPolygon(point: TujuPoint[], config?: BMapGL.PolygonOptions): BMapGL.Polygon;
 
-// 自定义overlay，drawHtml使用的是BMapGL.CustomOverlay，drawCustomOverlay使用的是SDK自己实现的类
-Map.drawHtml(point: Point, content: (() => HTMLElement) | HTMLElement, config?: any);
-Map.drawCustomOverlay(point: Point, html: HTMLElement | string, style?: any)
+    // 自定义overlay，drawHtml使用的是BMapGL.CustomOverlay，drawCustomOverlay使用的是SDK自己实现的类
+    drawHtml(point: TujuPoint, content: (() => HTMLElement) | HTMLElement, config?: any): BMapGL.CustomOverlay;
+    drawCustomOverlay(point: TujuPoint, html: HTMLElement | string, style?: any): BMapGL.Overlay;
+    // 创建多覆盖物图层
+    createCustomOverlays(createDom: (config: any) => HTMLElement, options?: CustomHtmlLayerConfig): CustomOverlays;
+    // 信息窗
+    createInfoWindow(content: string | HTMLElement, config?: BMapGL.InfoWindowOptions): BMapGL.InfoWindow;
+    // 打开目标信息框
+    openInfoWindow(infoWindow: BMapGL.InfoWindow, position: TujuPoint): void;
+    // 关闭信息框
+    openInfoWindow(infoWindow: BMapGL.InfoWindow, position: TujuPoint): void;
+}
+```
 
-// 信息窗
-Map.createInfoWindow(content: string | HTMLElement, config?: BMapGL.InfoWindowOptions)
-Map.openInfoWindow(infoWindow: BMapGL.InfoWindow, position: Point)
-Map. closeInfoWindow()
+#### 多覆盖物解决方案
+
+使用`Map.createCustomOverlays`方法可以创建一个可以同时绘制多个覆盖物的图层，可一次性设置覆盖物数据，并对所包含的覆盖物进行显隐操作。该图层是`TujuMap.CustomOverlays`的实例，也可自行 new 一个实例，通过 `Map.addCustomHtmlLayer` 和 `Map.removeCustomHtmlLayer`进行添加和删除。
+实例化`CustomOverlays`传入的参数`createDom`函数会在每个覆盖物创建是执行一次，传入的参数为`CustomOverlaysData`的properties属性，实例化后需要调用`setData`设置数据。
+```js
+interface CustomHtmlLayerConfig {
+    offsetX?: number; //覆盖物水平偏移量
+    offsetY?: number; //覆盖物垂直偏移量
+    minZoom?: number; //最小显示层级
+    maxZoom?: number; //最大显示层级
+    properties?: object; //自绑定属性
+    enableMassClear?: boolean; //是否能被统一清除掉覆盖物
+    enableDraggingMap: boolean; //是否可以在覆盖物位置拖拽地图
+}
+
+type CustomOverlaysData = Array<{coordinates: TujuPoint; properties?: any}>;
+
+declare class CustomOverlays {
+    overlay: BMapGL.CustomHtmlLayer;
+    constructor(createDom: (config: any) => HTMLElement, options?: CustomHtmlLayerConfig);
+    setData(data: CustomOverlaysData);
+    show();
+    hide();
+    removeOverlay(cusItem: BMapGL.CustomOverlay | string);
+    // 删除该图层上所有的覆盖物（不释放图层实例）
+    removeAllOverlays();
+    // Array<CustomOverlay> 获取当前图层所有的自定义覆盖物
+    getCustomOverlays();
+    addEventListener(type: string, listener: EventListener);
+    removeEventListener(type: string, listener: EventListener);
+}
 ```
 
 #### 覆盖物方法
@@ -178,14 +232,14 @@ Map. closeInfoWindow()
 #### 覆盖物删除
 
 传入覆盖物实例可以进行覆盖物的删除和清空
-删除指定覆盖物
+- 删除指定覆盖物
 `Map.removeOverlay(overlay)`
-清空地图覆盖物
+- 清空地图覆盖物
 `Map.clearOverlays()`
 
 #### 覆盖物事件
 
-覆盖物均可通过`addEventListener`和`removeEventlistener`添加和移除事件
+覆盖物均可通过`addEventListener`和`removeEventlistener`添加和移除事件。
 
 #### 事件冒泡阻止
 
@@ -203,7 +257,7 @@ map.addEventListener('click', e => {
 
 ### 路径规划
 
-SDK 对百度地图路径规划进行了封装，支持多点查询
+SDK 对百度地图路径规划进行了封装，支持多点查询。
 
 #### 步行规划
 
@@ -213,9 +267,28 @@ SDK 对百度地图路径规划进行了封装，支持多点查询
 
 ##### 实例方法
 
-`route.search(p1, p2);`
-`route.multiSearch([p1, p2, p3, ...]);`
+```js
+route.search(
+    start: TujuPoint,
+    end: TujuPoint
+): Promise<{
+    path: BMapGL.Point[];
+    distance: number;
+    duration: number;
+} | null>;
+```
 
+```js
+multiSearch(conditions: TujuPoint[]): Promise<
+    | {
+            path: any[];
+            distance: number;
+            duration: number;
+        }
+    | undefined
+>;
+```
+示例：
 ```js
 // 创建步行导航实例
 const walkRoute1 = map.createWalkRoute();

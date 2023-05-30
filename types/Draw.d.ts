@@ -20,10 +20,3 @@ declare class Draw {
     // 清空覆盖物
     clear(): void;
 }
-declare const DRAWTYPES: {
-    marker: BMapGL.DrawingType;
-    polyline: BMapGL.DrawingType;
-    rectangle: BMapGL.DrawingType;
-    polygon: BMapGL.DrawingType;
-    circle: BMapGL.DrawingType;
-};

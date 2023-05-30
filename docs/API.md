@@ -1,6 +1,19 @@
 # 图聚平台接口类
 
-`TujuMap.API`为图聚平台接口静态类，不可实例化，直接使用其方法。
+`TujuMap.API`为图聚平台接口静态类，不可实例化，直接使用其方法。内部请求使用的是 TujuMap.Request 类，封装了一些请求校验的逻辑，可以使用此类来发送自定义请求。
+
+```js
+// 底层使用Axios
+class Request {
+        constructor(config?: {baseUrl?: string});
+        get(url: string, config?: AxiosRequestConfig<any> | undefined): Promise<APIResponse>;
+        post(url: string, data?: any, config?: AxiosRequestConfig<any> | undefined): Promise<APIResponse>
+    }
+```
+
+## baseUrl
+
+可以通过设置 TujuMap.API.baseUrl 指定请求的服务器地址
 
 ## 返回结构
 
