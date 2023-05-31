@@ -5,8 +5,10 @@
 ## 创建地图实例
 
 ```js
-const map = new TujuMap.Map(container: string, config);
-const baseMap = map.baseMap; // 获得基础地图的能力，可以调用基础地图的全量API
+class Map {
+    baseMap: BMapGL.Map; // 基础地图对象，可以调用基础地图的全量API
+    constructor(container: string | HTMLElement, params: MapParamas);
+}
 ```
 
 其中`container`为目标容器，即地图要渲染的 dom 元素，需设置好宽高，config 为初始化所需配置，目前支持以下配置：
@@ -40,6 +42,7 @@ interface ControlConfig {
 ### 关于坐标
 
 为方便使用，SDK 坐标可以直接使用数组形式，例如[116, 38]，第一位为经度，第二位为纬度。
+
 ```js
 type TujuPoint = number[] | BMapGL.Point;
 ```
@@ -190,7 +193,8 @@ class Map {
 #### 多覆盖物解决方案
 
 使用`Map.createCustomOverlays`方法可以创建一个可以同时绘制多个覆盖物的图层，可一次性设置覆盖物数据，并对所包含的覆盖物进行显隐操作。该图层是`TujuMap.CustomOverlays`的实例，也可自行 new 一个实例，通过 `Map.addCustomHtmlLayer` 和 `Map.removeCustomHtmlLayer`进行添加和删除。
-实例化`CustomOverlays`传入的参数`createDom`函数会在每个覆盖物创建是执行一次，传入的参数为`CustomOverlaysData`的properties属性，实例化后需要调用`setData`设置数据。
+实例化`CustomOverlays`传入的参数`createDom`函数会在每个覆盖物创建是执行一次，传入的参数为`CustomOverlaysData`的 properties 属性，实例化后需要调用`setData`设置数据。
+
 ```js
 interface CustomHtmlLayerConfig {
     offsetX?: number; //覆盖物水平偏移量
@@ -232,10 +236,11 @@ declare class CustomOverlays {
 #### 覆盖物删除
 
 传入覆盖物实例可以进行覆盖物的删除和清空
-- 删除指定覆盖物
-`Map.removeOverlay(overlay)`
-- 清空地图覆盖物
-`Map.clearOverlays()`
+
+-   删除指定覆盖物
+    `Map.removeOverlay(overlay)`
+-   清空地图覆盖物
+    `Map.clearOverlays()`
 
 #### 覆盖物事件
 
@@ -288,7 +293,9 @@ multiSearch(conditions: TujuPoint[]): Promise<
     | undefined
 >;
 ```
+
 示例：
+
 ```js
 // 创建步行导航实例
 const walkRoute1 = map.createWalkRoute();

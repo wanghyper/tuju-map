@@ -15450,8 +15450,10 @@ let C0 = class {
     Ut(this, "baseMap");
     if (typeof BMapGL != "object")
       throw new Error("地图脚本未加载，请先调用初始化方法");
-    if (typeof _ != "string")
+    if (typeof _ != "string" && !(_ instanceof HTMLElement))
       throw new Error("未指定正确的目标容器");
+    if (typeof _ == "string" && !document.getElementById(_))
+      throw new Error("目标地图容器不存在，请确认是否已经加载");
     this.params = m;
     const C = Object.assign(m.mapOptions || {}, {
       // 地图poi是否允许点击
@@ -16640,7 +16642,7 @@ class Nf {
   }
 }
 const wi = new Nf(), wr = {
-  baseUrl: "http://marketmap.baidu-int.com",
+  baseUrl: "",
   // 用户校验逻辑，登录图聚后台获取tocken
   getTocken(E) {
     return wi.post(wr.baseUrl + "/openapi/open/v1/init", E);

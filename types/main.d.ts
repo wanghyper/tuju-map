@@ -26,7 +26,8 @@ declare module 'tuju-map' {
         HONEYCOMB: number;
     };
     class Map {
-        constructor(container: string, params: MapParamas);
+        baseMap: BMapGL.Map; // 基础地图对像
+        constructor(container: string | HTMLElement, params: MapParamas);
         // 底图样式设置
         setMapStyleV2(style: BMapGL.MapStyleV2): void;
         // 覆盖物
