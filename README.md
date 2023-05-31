@@ -43,9 +43,9 @@ const TujuMap = require('tuju-map');
 开始使用需要进行初始化，加载相关的脚本资源，该方法为异步函数，返回 Promise 对象
 
 ```js
-TujuMap.init(params: {type?: 'BMapGL', ak: string, authConfig?: any})
+TujuMap.init(params: {type?: 'BMapGL', ak: string})
 ```
 
-其中 type 为要加载的基础地图类型，目前只有百度地图，此参数可缺省；ak 为地图脚本加载所需，百度地图需[申请](https://lbsyun.baidu.com/faq/search?id=299&title=677)，authConfig 为图聚接口校验使用，具体请看 API 部分，如不使用，忽略即可。
+其中 type 为要加载的基础地图类型，目前只有百度地图，此参数可缺省；ak 为地图脚本加载所需，百度地图需[申请](https://lbsyun.baidu.com/faq/search?id=299&title=677)。
 
  更多文档内容请看[文档](https://wanghyper.github.io/tuju-map/)

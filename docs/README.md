@@ -4,14 +4,13 @@
 
 ## 简介
 
-TujuMap 整合了[百度地图 JSAPI](https://lbsyun.baidu.com/index.php?title=jspopularGL)与[MapvGL](https://mapv.baidu.com/gl/docs/index.html)的能力，对一些功能做了简化封装，方便开发者快速开发。同时提供了图聚平台的一些能力，配合图聚平台，帮助开发者进行二次开发。
-
+TujuMap 整合了[百度地图 JSAPI](https://lbsyun.baidu.com/index.php?title=jspopularGL)与[MapvGL](https://mapv.baidu.com/gl/docs/index.html)的能力，对一些功能做了简化封装，更适合es6模块化开发的方式，方便开发者快速开发。
 ## 如何安装
 
 npm 安装
 
-```sh
-    npm install tuju-map
+```bash
+npm install tuju-map
 ```
 
 SDK 提供三种类型脚本的引入方式
@@ -43,7 +42,7 @@ const TujuMap = require('tuju-map');
 开始使用需要进行初始化，加载相关的脚本资源，该方法为异步函数，返回 Promise 对象
 
 ```js
-TujuMap.init(params: {type?: 'BMapGL', ak: string, authConfig?: any})
+TujuMap.init(params: {type?: 'BMapGL', ak: string})
 ```
 
-其中 type 为要加载的基础地图类型，目前只有百度地图，此参数可缺省；ak 为地图脚本加载所需，百度地图需[申请](https://lbsyun.baidu.com/faq/search?id=299&title=677)，authConfig 为图聚接口校验使用，具体请看 API 部分，如不使用，忽略即可。
+其中 type 为要加载的基础地图类型，目前只有百度地图，此参数可缺省；ak 为地图脚本加载所需，百度地图需[申请](https://lbsyun.baidu.com/faq/search?id=299&title=677)。
