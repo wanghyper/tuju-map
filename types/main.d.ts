@@ -184,6 +184,7 @@ declare module 'tuju-map' {
         setData(data: ClusterLayerData[]);
         setConfig(config: ClusterLayerConfig);
         flyToViewport(config?: ViewportConfig);
+        getClusterPoints(childrenId): any[];
         show(): void;
         hide(): void;
     }
@@ -192,6 +193,7 @@ declare module 'tuju-map' {
         setData(data: IconClusterLayerData[]);
         setConfig(config: IconClusterLayerConfig);
         flyToViewport(config?: ViewportConfig);
+        getClusterPoints(childrenId): any[];
         show(): void;
         hide(): void;
     }

@@ -74,6 +74,7 @@ interface IconClusterLayerConfig extends LayerConfig {
     };
     iconOptions?: IconLayerConfig; // 可使用IconLayer的配置
     iconExtent: Record<number, string>; // 图片梯度配置
+    beforeRender?: (item: any) => boolean; // 如果需要自定义聚合前渲染，可以配置此项，传入值为当前聚合层级的数据。显式地返回false可以阻止默认的渲染，否则默认还会被渲染
 }
 interface PolygonLayerConfig extends LayerConfig {
     blend?: 'default' | 'deeper' | 'normal' | 'lighter'; // 混合模式
@@ -178,7 +179,7 @@ interface LabelLayerData extends LayerData {
 }
 interface ClusterLayerData extends LayerData {
     coordinates: LngLat;
-    style: {
+    style?: {
         icon?: string; // 未聚合时的图片
         width?: number; // 未聚合时的图片宽度
         height?: number; // 未聚合时的图片高度

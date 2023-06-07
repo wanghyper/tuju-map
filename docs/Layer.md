@@ -302,6 +302,25 @@ interface ClusterLayerData extends LayerData {
 }
 ```
 
+额外的方法：
+`getClusterPoints(childrenId)`
+可以根据聚合点的 children 字段，获取聚合点下的所有原始点，方便做一些自定义统计，结合 `beforeRender` 可以自定义展示统计结果。
+
+```js
+new TujuMap.ClusterLayer({
+    clusterRadius: 200,
+    beforeRender: data => {
+        console.log(data);
+        data.forEach(item => {
+            const children = clusterLayer.getClusterPoints(item.children);
+            console.log(children);
+        });
+
+        return false;
+    },
+});
+```
+
 ### TujuMap.IconClusterLayer 图片聚合图层
 
 配置结构：

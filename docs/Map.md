@@ -193,7 +193,7 @@ class Map {
 #### 多覆盖物解决方案
 
 使用`Map.createCustomOverlays`方法可以创建一个可以同时绘制多个覆盖物的图层，可一次性设置覆盖物数据，并对所包含的覆盖物进行显隐操作。该图层是`TujuMap.CustomOverlays`的实例，也可自行 new 一个实例，通过 `Map.addCustomHtmlLayer` 和 `Map.removeCustomHtmlLayer`进行添加和删除。
-实例化`CustomOverlays`传入的参数`createDom`函数会在每个覆盖物创建是执行一次，传入的参数为`CustomOverlaysData`的 properties 属性，实例化后需要调用`setData`设置数据。
+实例化`CustomOverlays`传入的参数`createDom`函数会在每个覆盖物创建时执行一次，传入的参数为`CustomOverlaysData`的 properties 属性，实例化后需要调用`setData`来设置和更新数据，图层内部会去生成与更新覆盖物。
 
 ```js
 interface CustomHtmlLayerConfig {
