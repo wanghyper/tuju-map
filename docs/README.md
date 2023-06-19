@@ -1,9 +1,5 @@
 # TujuMap
 
-图聚前端能力 SDK
-
-## 简介
-
 TujuMap 整合了[百度地图 JSAPI](https://lbsyun.baidu.com/index.php?title=jspopularGL)与[MapvGL](https://mapv.baidu.com/gl/docs/index.html)的能力，对一些功能做了简化封装，更适合es6模块化开发的方式，方便开发者快速开发。
 ## 如何安装
 

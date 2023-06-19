@@ -20,6 +20,7 @@ interface MapParamas {
     zoom?: number; // 初始缩放层级
     showBuilding?: boolean; // 是否显示3D建筑物（仅支持WebGL方式渲染的地图）
     showIndoor?: boolean; // 是否显示室内图
+    showIndoorControls?: boolean; // 是否显示室内图楼层切换控件，不指定默认显示
     enableIconClick?: boolean; // 地图poi是否允许点击
     enableKeyboard?: boolean; // 是否启用键盘控制
     enableScrollWheelZoom?: boolean; // 是否启用滚轮缩放
@@ -331,3 +332,66 @@ walkRoute2.multiSearch([start, middle, end]).then(res => {
 
 `route.search(p1, p2);`
 `route.multiSearch([p1, p2, p3]);`
+
+### 轨迹动画
+
+#### 创建轨迹动画实例
+
+```js
+map.createTrackAnimation(
+    path: TujuPoint[],
+    options?: BMapGL.PolylineOptions & TrackAnimationOptions
+);
+
+interface TrackAnimationOptions {
+    duration?: number; // 动画持续时常，单位ms,默认10000
+    overallView?: boolean; // 动画完成后是否自动调整视野到总览
+    tilt?: number; // 轨迹播放的角度，默认为55
+    heading?: number; //地图旋转方向,默认0
+    duration?: number; // 动画持续时长，默认为10000，单位ms
+    delay?: number; // 动画开始的延迟，默认0，单位ms
+}
+```
+
+#### 实例方法
+
+```js
+declare class TrackAnimation {
+    start(); // 开始动画
+    cancel(); // 终止动画
+    setPath(path: TujuPoint[]); // 通过设置path重新生成线覆盖物
+    setPolyline(polyline: BMapGL.Polyline); // 设置动画轨迹折线覆盖物，也可直接使用setPath方法设置
+    getPolyline(): BMapGL.Polyline; // 获取动画轨迹折线覆盖物
+    setDelay(delay: Number); // 动画开始延迟，单位ms
+    getDelay(); // 获取动画开始延迟，单位ms
+    setDuration(duration: Number); // 设置动画持续时间。建议根据轨迹长度调整，地图在轨迹播放过程中动态渲染，动画持续时间太短影响地图渲染效果。
+    getDuration(); // 获取动画持续时间
+    enableOverallView(); // 开启动画结束后总览视图缩放（调整地图到能看到整个轨迹的视野），默认开启
+    disableOverallView(); // 关闭动画结束后总览视图缩放（调整地图到能看到整个轨迹的视野），默认关闭
+    setTilt(tilt: Number); // 设置动画中的地图倾斜角度，默认55度
+    getTilt(); // 获取动画中的地图倾斜角度
+    setZoom(zoom: Number); // 设置动画中的缩放级别，默认会根据轨迹情况调整到一个合适的级别
+    getZoom(); // 设置动画中的缩放级别
+}
+```
+
+示例：
+
+```js
+const path = [
+    [116.297611, 40.047363],
+    [116.302839, 40.048219],
+    [116.308301, 40.050566],
+    [116.305732, 40.054957],
+    [116.304754, 40.057953],
+    [116.306487, 40.058312],
+    [116.307223, 40.056379],
+];
+const trackAnimation = map.createTrackAnimation(path, {
+    duration: 5000,
+    tilt: 0,
+    strokeColor: '#00ff00',
+    strokeWeight: 7,
+});
+trackAnimation.start();
+```

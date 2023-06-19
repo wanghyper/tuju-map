@@ -104,24 +104,24 @@ declare module 'tuju-map' {
         // 坐标转换
         /**
          * @description 经纬度转墨卡托
-         * @returns mercator number[]
          */
         lnglatToMercator(lng: number, lat: number): number[];
         /**
          * @description 墨卡托转经纬度
-         * @returns lnglat number[]
          */
         mercatorToLnglat(x: number, y: number): number[];
         /**
          * @description 屏幕像素位置转换为地图坐标
-         * @returns BMapGL.Point
          */
         pixelToPoint(x: number, y: number): BMapGL.Point;
         /**
          * @description 地图坐标转换为屏幕像素位置
-         * @returns BMapGL.Pixel
          */
         pointToPixel(lng: number, lat: number): BMapGL.Pixel;
+         /**
+         * @description 创建轨迹动画实例
+         */
+        createTrackAnimation(path: TujuPoint[], options?: BMapGL.PolylineOptions & TrackAnimationOptions): TrackAnimation;
     }
     class Viewer {
         constructor(params: {map: Map});
