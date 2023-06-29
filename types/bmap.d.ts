@@ -115,12 +115,12 @@ declare class TrackAnimation {
     getZoom(); // 设置动画中的缩放级别
 }
 interface TrackAnimationOptions {
-    duration?: number; // 动画持续时常，单位ms,默认10000
     overallView?: boolean; // 动画完成后是否自动调整视野到总览
     tilt?: number; // 轨迹播放的角度，默认为55
     heading?: number; //地图旋转方向,默认0
     duration?: number; // 动画持续时长，默认为10000，单位ms
     delay?: number; // 动画开始的延迟，默认0，单位ms
+    enableViewAnimation?: boolean; // 是否开启视角跟随动画，默认为true
 }
 interface ViewAnimationKeyFrames {
     center: BMapGL.Point; // 定义第一个关键帧帧地图中心点

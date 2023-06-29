@@ -350,6 +350,7 @@ interface TrackAnimationOptions {
     heading?: number; //地图旋转方向,默认0
     duration?: number; // 动画持续时长，默认为10000，单位ms
     delay?: number; // 动画开始的延迟，默认0，单位ms
+    enableViewAnimation?: boolean; // 是否开启视角跟随动画，默认为true
 }
 ```
 
