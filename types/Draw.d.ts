@@ -20,3 +20,28 @@ declare class Draw {
     // 清空覆盖物
     clear(): void;
 }
+interface DrawConfig {
+    enableEdit?: boolean;
+    enableDrawingTool?: boolean;
+    drawingToolOptions?: {
+        anchor?: number;
+        scale?: number;
+        drawingModes?: string[];
+        offset?: number[];
+    };
+    enableCalculate?: boolean; // 绘制是否进行测距(画线时候)、测面(画圆、多边形、矩形)
+    enableSorption?: boolean; // 是否开启边界吸附功能
+    sorptionDistance?: number; // 边界吸附距离
+    enableGpc?: boolean; // 是否开启延边裁剪功能
+    enableLimit?: boolean; // 是否开启超限提示
+    limitOptions?: {
+        area: number; // 面积超限值
+        distance: number;
+    };
+    // 设置绘制的展示样式，设置后会直接替换默认样式
+    circleOptions?: BMapGL.CircleOptions; // 圆的样式
+    polylineOptions?: BMapGL.PolylineOptions; // 线的样式
+    polygonOptions?: BMapGL.PolygonOptions; // 多边形的样式
+    rectangleOptions?: BMapGL.PolygonOptions; // 矩形的样式
+    labelOptions?: Record<string, string>; // 提示框label的样式，接受css属性对象
+}

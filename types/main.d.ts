@@ -1,11 +1,12 @@
 /// <reference path="API.d.ts"/>
 /// <reference path="bmap.d.ts"/>
-/// <reference path="layer.d.ts"/>
-/// <reference path="layers.d.ts"/>
+/// <reference path="mapvgl-layers.d.ts"/>
+/// <reference path="TujuLayer.d.ts"/>
 /// <reference path="Draw.d.ts"/>
 /// <reference path="Route.d.ts"/>
+/// <reference path="LocalSearch.d.ts"/>
 declare module 'tuju-map' {
-    function init(params: {ak?: string; authConfig?: AuthConfig; type?: 'BMapGL'; baseUrl?: string}): Promise<BMapGL>;
+    function init(params: {ak?: string; authConfig?: AuthConfig; type?: 'BMapGL'; baseUrl?: string}): Promise<Map>;
     const DRAWTYPES: {
         marker: BMapGL.DrawingType;
         polyline: BMapGL.DrawingType;
@@ -14,16 +15,32 @@ declare module 'tuju-map' {
         circle: BMapGL.DrawingType;
     };
     const LayerTypes: {
-        POINT: number;
-        LINE: number;
-        POLYGON: number;
-        ICON: number;
-        TEXT: number;
-        LABEL: number;
-        CLUSTER: number;
-        HEATMAP: number;
-        GRID: number;
-        HONEYCOMB: number;
+        POINT: 1;
+        LINE: 2;
+        POLYGON: 3;
+        ICON: 4;
+        TEXT: 5;
+        LABEL: 6;
+        CLUSTER: 7;
+        HEATMAP: 8;
+        GRID: 9;
+        HONEYCOMB: 10;
+    };
+    const TujuLayerTypes: {
+        POINT: 1;
+        LINE: 2;
+        POLYGON: 3;
+    };
+    // 样式类型（默认样式：0；分类样式：1；分段样式：2；热力图：3；网格图：4；蜂巢图：5；聚合样式：6）
+    const StyleTypes: {
+        default: 0;
+        classify: 1;
+        segment: 2;
+        heat: 3;
+        grid: 4;
+        honeycomb: 5;
+        cluster: 7;
+        migrate: 6;
     };
     class Map {
         baseMap: BMapGL.Map; // 基础地图对像
@@ -33,8 +50,6 @@ declare module 'tuju-map' {
         // 覆盖物
         addOverlay(overlay: BMapGL.Overlay): void;
         removeOverlay(overlay: BMapGL.Overlay): void;
-        addCustomHtmlLayer(cusLayer: CustomOverlays);
-        removeCustomHtmlLayer(cusLayer: CustomOverlays);
         getOverlays(): BMapGL.Overlay[];
         clearOverlays(): void;
         drawMarker(point: TujuPoint, config?: BMapGL.MarkerOptions): BMapGL.Marker;
@@ -59,7 +74,7 @@ declare module 'tuju-map' {
         drawCustomOverlay(point: TujuPoint, html: HTMLElement | string, style?: any): BMapGL.Overlay;
         drawHtml(point: TujuPoint, content: (() => HTMLElement) | HTMLElement, config?: any): BMapGL.CustomOverlay;
         // 创建多覆盖物图层
-        createCustomOverlays(createDom: (config: any) => HTMLElement, options?: CustomHtmlLayerConfig): CustomOverlays;
+        createCustomOverlays(createDom: (config: any) => HTMLElement, options?: CustomOverlaysConfig): CustomOverlays
         // 创建信息窗
         createInfoWindow(content: string | HTMLElement, config?: BMapGL.InfoWindowOptions): BMapGL.InfoWindow;
         // 打开目标信息框
@@ -118,11 +133,16 @@ declare module 'tuju-map' {
          * @description 地图坐标转换为屏幕像素位置
          */
         pointToPixel(lng: number, lat: number): BMapGL.Pixel;
-         /**
+        /**
          * @description 创建轨迹动画实例
          */
-        createTrackAnimation(path: TujuPoint[], options?: BMapGL.PolylineOptions & TrackAnimationOptions): TrackAnimation;
+        createTrackAnimation(
+            path: TujuPoint[],
+            options?: BMapGL.PolylineOptions & TrackAnimationOptions
+        ): TrackAnimation;
     }
+    CustomOverlay;
+    CustomOverlays;
     class Viewer {
         constructor(params: {map: Map});
         add<T>(layer: T): T;

@@ -100,6 +100,8 @@ type TujuPoint = number[] | BMapGL.Point;
 #### 墨卡托转经纬度
 
 `Map.mercatorToLnglat(x: number, y: number)`
+#### 根据当前地图级别，返回一个像素对应多少单位的平面墨卡托坐标
+`Map.getZoomUnits()`
 
 #### 屏幕像素位置转换为地图坐标
 
@@ -193,35 +195,28 @@ class Map {
 
 #### 多覆盖物解决方案
 
-使用`Map.createCustomOverlays`方法可以创建一个可以同时绘制多个覆盖物的图层，可一次性设置覆盖物数据，并对所包含的覆盖物进行显隐操作。该图层是`TujuMap.CustomOverlays`的实例，也可自行 new 一个实例，通过 `Map.addCustomHtmlLayer` 和 `Map.removeCustomHtmlLayer`进行添加和删除。
-实例化`CustomOverlays`传入的参数`createDom`函数会在每个覆盖物创建时执行一次，传入的参数为`CustomOverlaysData`的 properties 属性，实例化后需要调用`setData`来设置和更新数据，图层内部会去生成与更新覆盖物。
+使用`Map.createCustomOverlays`方法可以创建一个可以同时绘制多个覆盖物的图层，可一次性设置覆盖物数据，并对所包含的覆盖物进行显隐操作。该图层是`TujuMap.CustomOverlays`的实例.
+实例化`CustomOverlays`需传入的参数`createDom`函数来创建要绘制的dom元素，该函数会在每个覆盖物创建时执行一次，传入的参数为`CustomOverlaysData`的 properties 属性，实例化后需要调用`setData`来设置和更新数据，图层内部会去生成与更新覆盖物。
 
 ```js
-interface CustomHtmlLayerConfig {
-    offsetX?: number; //覆盖物水平偏移量
-    offsetY?: number; //覆盖物垂直偏移量
-    minZoom?: number; //最小显示层级
-    maxZoom?: number; //最大显示层级
-    properties?: object; //自绑定属性
-    enableMassClear?: boolean; //是否能被统一清除掉覆盖物
-    enableDraggingMap: boolean; //是否可以在覆盖物位置拖拽地图
+interface CustomOverlaysConfig {
+    containerStyle?: Record<string, string>; // 最外层容器的样式，可通过此处设置偏移量等
+    enableDraggingMap?: boolean; //是否可以在覆盖物位置拖拽地图
 }
 
 type CustomOverlaysData = Array<{coordinates: TujuPoint; properties?: any}>;
 
 declare class CustomOverlays {
     overlay: BMapGL.CustomHtmlLayer;
-    constructor(createDom: (config: any) => HTMLElement, options?: CustomHtmlLayerConfig);
-    setData(data: CustomOverlaysData);
-    show();
-    hide();
-    removeOverlay(cusItem: BMapGL.CustomOverlay | string);
-    // 删除该图层上所有的覆盖物（不释放图层实例）
-    removeAllOverlays();
-    // Array<CustomOverlay> 获取当前图层所有的自定义覆盖物
-    getCustomOverlays();
-    addEventListener(type: string, listener: EventListener);
-    removeEventListener(type: string, listener: EventListener);
+    constructor(map: BMapGL.Map, createDom: (config: any) => HTMLElement, options?: CustomOverlaysConfig);
+    setData(data: CustomOverlaysData); // 设置覆盖物数据，会自动刷新每个覆盖物的内容
+    show(); //  显示覆盖物
+    hide(); //  隐藏覆盖物
+    removeOverlay(cusItem: CustomOverlay); //  移除覆盖物
+    removeAllOverlays(); // 删除该图层上所有的覆盖物（不释放图层实例）
+    getCustomOverlays(); // Array<CustomOverlay> 获取当前图层所有的自定义覆盖物
+    addEventListener(type: string, listener: (e: any) => void);
+    removeEventListener(type: string, listener: (e: any) => void);
 }
 ```
 
@@ -344,7 +339,6 @@ map.createTrackAnimation(
 );
 
 interface TrackAnimationOptions {
-    duration?: number; // 动画持续时常，单位ms,默认10000
     overallView?: boolean; // 动画完成后是否自动调整视野到总览
     tilt?: number; // 轨迹播放的角度，默认为55
     heading?: number; //地图旋转方向,默认0

@@ -1,6 +1,7 @@
 # 绘制工具
 
-SDK 封装了了地图常用的绘制功能，因存在UI交互，需额外引入SDK内的css样式文件
+SDK 封装了了地图常用的绘制功能，因存在 UI 交互，需额外引入 SDK 内的 css 样式文件
+
 ```js
 import 'tuju-map/dist/style.css';
 ```
@@ -14,14 +15,29 @@ constructor(map: BMapGL.Map, config?: DrawConfig);
 
 // DrawConfig内容
 interface DrawConfig {
-    enableEdit?: boolean; // 是否启用二次编辑
-    enableDrawingTool?: boolean; // 是否显示工具栏
-    drawingToolOptions?: { // 工具栏相关配置
-        anchor: number; // 位置，参照地图控件位置
-        scale: number; // 缩放大小
-        drawingModes: number[]; // 显示哪些绘制方法 TujuMap.DRAWTYPES
-        offset: number[]; // 相对原位置偏移量
+    enableEdit?: boolean;
+    enableDrawingTool?: boolean;
+    drawingToolOptions?: {
+        anchor?: number;
+        scale?: number;
+        drawingModes?: string[];
+        offset?: number[];
     };
+    enableCalculate?: boolean; // 绘制是否进行测距(画线时候)、测面(画圆、多边形、矩形)
+    enableSorption?: boolean; // 是否开启边界吸附功能
+    sorptionDistance?: number; // 边界吸附距离
+    enableGpc?: boolean; // 是否开启延边裁剪功能
+    enableLimit?: boolean; // 是否开启超限提示
+    limitOptions?: {
+        area: number; // 面积超限值
+        distance: number;
+    };
+    // 设置绘制的展示样式，设置后会直接替换默认样式
+    circleOptions?: BMapGL.CircleOptions; // 圆的样式
+    polylineOptions?: BMapGL.PolylineOptions; // 线的样式
+    polygonOptions?: BMapGL.PolygonOptions; // 多边形的样式
+    rectangleOptions?: BMapGL.PolygonOptions; // 矩形的样式
+    labelOptions?: Record<string, string>; // 提示框label的样式，接受css属性对象
 }
 // 绘制方法
 TujuMap.DRAWTYPES.marker
@@ -45,8 +61,14 @@ Draw.drawPolyline();
 Draw.drawPolygon();
 Draw.drawCircle();
 Draw.drawRectangle();
+ // 是否开启绘制
+Draw.isOpen()
 // 清空覆盖物
 Draw.clear();
+// 绘制过程中取消
+Draw.cancel();
+// 退出绘制
+Draw.close();
 ```
 
 ### 监听绘制事件
@@ -66,6 +88,18 @@ Draw.onDrawing(isDrawing: boolean, overlay: any)
 Draw.onOverlayHover(isHover: boolean, overlay: any)
 // 已绘制的overlay变化
 Draw.onOverlayChange(overlay: any, map: BMapGL.Map)
+```
+
+### 通过事件返回的 overlay 实例结构
+
+```js
+interface overlay {
+    calculate: string; // 面积
+    center: number[]; // 中心点，圆形和矩形才有值
+    clearSelf: () => {}; // 清除自身的方法
+    drawingMode: string; // 绘制的类型
+    overlay: BMapGL.Overlay; // 实际的覆盖物实例
+}
 ```
 
 ### 示例

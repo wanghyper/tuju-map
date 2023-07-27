@@ -3,17 +3,12 @@ declare namespace BMapGL {
         constructor(params: {anchor: BMapGL.ControlAnchor; offset: BMapGL.Size});
     }
     class CustomOverlay extends BMapGL.Overlay {
-        constructor(
-            createDom: (config?: any) => HTMLElement,
-            config: CustomHtmlLayerConfig & {
-                point: Point; //覆盖物的经纬度，必填
-            }
-        );
+        constructor(createDom: (config?: any) => HTMLElement, config: any);
         show();
         hide();
     }
     class CustomHtmlLayer extends BMapGL.Overlay {
-        constructor(createDom: (config?: any) => HTMLElement, config?: CustomHtmlLayerConfig);
+        constructor(createDom: (config?: any) => HTMLElement, config?: any);
         show();
         hide();
     }
@@ -65,37 +60,32 @@ interface ViewportConfig {
     zoomFactor?: number; // 地图级别的偏移量，您可以在方法得出的结果上增加一个偏移值。例如map.setViewport计算出地图的级别为10，如果zoomFactor为-1，则最终的地图级别为9
     delay?: number; // 改变地图视野的延迟执行时间，单位毫秒，默认为200ms。此延时仅针对动画效果有效
 }
-interface DrawConfig {
-    enableEdit?: boolean;
-    enableDrawingTool?: boolean;
-    drawingToolOptions?: {
-        anchor: number;
-        scale: number;
-        drawingModes: string[];
-        offset: number[];
-    };
+interface CustomOverlayConfig {
+    containerStyle?: Record<string, string>; // 最外层容器的样式，可通过此处设置偏移量等
+    enableDraggingMap?: boolean; //是否可以在覆盖物位置拖拽地图
+    enableMassClear?: boolean; // 是否能被统一清除掉覆盖物
 }
-interface CustomHtmlLayerConfig {
-    offsetX?: number; //覆盖物水平偏移量
-    offsetY?: number; //覆盖物垂直偏移量
-    minZoom?: number; //最小显示层级
-    maxZoom?: number; //最大显示层级
-    properties?: object; //自绑定属性
-    enableMassClear?: boolean; //是否能被统一清除掉覆盖物
-    enableDraggingMap: boolean; //是否可以在覆盖物位置拖拽地图
+interface CustomOverlaysConfig {
+    containerStyle?: Record<string, string>; // 最外层容器的样式，可通过此处设置偏移量等
+    enableDraggingMap?: boolean; //是否可以在覆盖物位置拖拽地图
 }
 type CustomOverlaysData = Array<{coordinates: TujuPoint; properties?: any}>;
+declare class CustomOverlay {
+    constructor(point: TujuPoint, content: HTMLElement | string, config?: CustomOverlayConfig);
+    addEventListener(type: string, listener: (e: any) => void): void; // 添加事件监听器
+    removeEventListener(type: string, listener: (e: any) => void): void; // 移除事件监听器
+}
 declare class CustomOverlays {
     overlay: BMapGL.CustomHtmlLayer;
-    constructor(createDom: (config: any) => HTMLElement, options?: CustomHtmlLayerConfig);
+    constructor(map: BMapGL.Map, createDom: (config: any) => HTMLElement, options?: CustomOverlaysConfig);
     setData(data: CustomOverlaysData); // 设置覆盖物数据，会自动刷新每个覆盖物的内容
     show(); //  显示覆盖物
     hide(); //  隐藏覆盖物
-    removeOverlay(cusItem: BMapGL.CustomOverlay | string); //  移除覆盖物
+    removeOverlay(cusItem: CustomOverlay); //  移除覆盖物
     removeAllOverlays(); // 删除该图层上所有的覆盖物（不释放图层实例）
     getCustomOverlays(); // Array<CustomOverlay> 获取当前图层所有的自定义覆盖物
-    addEventListener(type: string, listener: EventListener);
-    removeEventListener(type: string, listener: EventListener);
+    addEventListener(type: string, listener: (e: any) => void);
+    removeEventListener(type: string, listener: (e: any) => void);
 }
 declare class TrackAnimation {
     start(); // 开始动画
@@ -115,10 +105,10 @@ declare class TrackAnimation {
     getZoom(); // 设置动画中的缩放级别
 }
 interface TrackAnimationOptions {
+    duration?: number; // 动画持续时常，单位ms,默认10000
     overallView?: boolean; // 动画完成后是否自动调整视野到总览
     tilt?: number; // 轨迹播放的角度，默认为55
     heading?: number; //地图旋转方向,默认0
-    duration?: number; // 动画持续时长，默认为10000，单位ms
     delay?: number; // 动画开始的延迟，默认0，单位ms
     enableViewAnimation?: boolean; // 是否开启视角跟随动画，默认为true
 }
@@ -128,4 +118,7 @@ interface ViewAnimationKeyFrames {
     tilt: number; // 定义第一个关键帧地图倾斜角度
     heading: number; // 定义第一个关键帧地图旋转方向
     percentage: number; // 定义第一个关键帧处于动画过程的百分比，取值范围0~1
+}
+interface LocalSearchConfig {
+    location: BMapGL.Map | string; // 地图实例或地理位置字符串
 }
