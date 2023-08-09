@@ -1,6 +1,28 @@
 declare namespace BMapGL {
+    class Control {
+        name?: string;
+        constructor();
+        defaultAnchor: ControlAnchor;
+        defaultOffset: Size;
+        initialize(map: Map): HTMLElement;
+        setAnchor(anchor: ControlAnchor): void;
+        getAnchor(): ControlAnchor;
+        setOffset(offset: Size): void;
+        getOffset(): Size;
+        show(): void;
+        hide(): void;
+        isVisible(): boolean;
+        /** 自定义Control在add之后立马能读取到Container, 内置Control不能 */
+        getContainer(): HTMLElement | undefined;
+    }
     class CityListControl extends BMapGL.Control {
         constructor(params: {anchor: BMapGL.ControlAnchor; offset: BMapGL.Size});
+    }
+    class ZoomControl extends Control {
+        constructor(opts?: ZoomControlOptions);
+    }
+    class NavigationControl3D extends Control {
+        constructor(opts?: NavigationControl3DOptions);
     }
     class CustomOverlay extends BMapGL.Overlay {
         constructor(createDom: (config?: any) => HTMLElement, config: any);
@@ -66,6 +88,9 @@ interface CustomOverlayConfig {
     enableMassClear?: boolean; // 是否能被统一清除掉覆盖物
 }
 interface CustomOverlaysConfig {
+    maxZoom?: number; // 最大可见级别, 默认为21
+    minZoom?: number; // 最小可见级别，默认为3
+    disableZoomControl?: boolean; // 是否禁用地图缩放显隐控制，默认为false
     containerStyle?: Record<string, string>; // 最外层容器的样式，可通过此处设置偏移量等
     enableDraggingMap?: boolean; //是否可以在覆盖物位置拖拽地图
 }
@@ -86,6 +111,9 @@ declare class CustomOverlays {
     getCustomOverlays(); // Array<CustomOverlay> 获取当前图层所有的自定义覆盖物
     addEventListener(type: string, listener: (e: any) => void);
     removeEventListener(type: string, listener: (e: any) => void);
+    destroy(); // 销毁该实例的状态
+    disableZoomControl(); // 禁用缩放级别显隐控制
+    enableZoomControl(); // 启用缩放级别显隐控制
 }
 declare class TrackAnimation {
     start(); // 开始动画

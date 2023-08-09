@@ -2,13 +2,122 @@ declare module 'mapvgl';
 declare class Layer {
     name: string;
     originData: any[];
-    setData(data: any[]);
+    setData(data: any[], ...rags);
     setConfig(config: any);
     flyToViewport();
     show();
     hide();
 }
-
+declare class Viewer {
+    constructor(params: {map: Map});
+    add<T>(layer: T): T;
+    remove<T>(layer: T);
+    clear();
+    getAll();
+    destroy();
+}
+declare class PointLayer implements Layer {
+    constructor(config: PointLayerConfig);
+    name: string;
+    originData: any[];
+    setData(data: PointLayerData[]);
+    setConfig(config: PointLayerConfig);
+    flyToViewport(config?: ViewportConfig);
+    show(): void;
+    hide(): void;
+}
+declare class LineLayer implements Layer {
+    constructor(config: LineLayerConfig);
+    name: string;
+    originData: any[];
+    setData(data: LineLayerData[]);
+    setConfig(config: LineLayerConfig);
+    flyToViewport(config?: ViewportConfig);
+    show(): void;
+    hide(): void;
+}
+declare class PolygonLayer implements Layer {
+    constructor(config: PolygonLayerConfig);
+    name: string;
+    originData: any[];
+    setData(data: PolygonLayerData[]);
+    setConfig(config: PolygonLayerConfig);
+    flyToViewport(config?: ViewportConfig);
+    show(): void;
+    hide(): void;
+}
+declare class IconLayer implements Layer {
+    constructor(config: IconLayerConfig);
+    name: string;
+    originData: any[];
+    setData(data: IconLayerData[]);
+    setConfig(config: IconLayerConfig);
+    flyToViewport(config?: ViewportConfig);
+    show(): void;
+    hide(): void;
+}
+declare class TextLayer implements Layer {
+    constructor(config: TextLayerConfig);
+    name: string;
+    originData: any[];
+    setData(data: TextLayerData[]);
+    setConfig(config: TextLayerConfig);
+    flyToViewport(config?: ViewportConfig);
+    show(): void;
+    hide(): void;
+}
+declare class LabelLayer implements Layer {
+    constructor(config: LabelLayerConfig);
+    name: string;
+    originData: any[];
+    setData(data: LabelLayerData[]);
+    setConfig(config: LabelLayerConfig);
+    flyToViewport(config?: ViewportConfig);
+    show(): void;
+    hide(): void;
+}
+declare class ClusterLayer implements Layer {
+    constructor(config: ClusterLayerConfig);
+    name: string;
+    originData: any[];
+    setData(data: ClusterLayerData[]);
+    setConfig(config: ClusterLayerConfig);
+    flyToViewport(config?: ViewportConfig);
+    getClusterPoints(childrenId): any[];
+    show(): void;
+    hide(): void;
+}
+declare class IconClusterLayer implements Layer {
+    constructor(config: IconClusterLayerConfig);
+    name: string;
+    originData: any[];
+    setData(data: IconClusterLayerData[]);
+    setConfig(config: IconClusterLayerConfig);
+    flyToViewport(config?: ViewportConfig);
+    getClusterPoints(childrenId): any[];
+    show(): void;
+    hide(): void;
+}
+declare class HeatmapLayer implements Layer {
+    constructor(config: HeatmapLayerConfig);
+    name: string;
+    originData: any[];
+    setData(data: HeatmapLayerData[]);
+    setConfig(config: HeatmapLayerConfig);
+    flyToViewport(config?: ViewportConfig);
+    show(): void;
+    hide(): void;
+}
+declare class GridLayer implements Layer {
+    constructor(config: GridLayerConfig);
+    name: string;
+    originData: any[];
+    setData(data: GridLayerData[]);
+    setConfig(config: GridLayerConfig);
+    flyToViewport(config?: ViewportConfig);
+    show(): void;
+    hide(): void;
+}
 // 图层配置
 type LngLat = number[];
 interface LayerConfig {
@@ -16,8 +125,9 @@ interface LayerConfig {
     enablePicked?: boolean; // 是否可以拾取
     autoSelect?: boolean; // 根据鼠标位置来自动设置选中项
     selectedColor?: string; // 选中项颜色
-    onClick?: (item: any) => void; // 点击事件
-    onMousemove?: (item: any) => void; // 鼠标滑动事件
+    unit?: string; // 单位 像素px 或者 米m
+    onClick?: (item: any, mapEvent?: any) => void; // 点击事件
+    onMousemove?: (item: any, mapEvent?: any) => void; // 鼠标滑动事件
 }
 interface PointLayerConfig extends LayerConfig {
     borderWidth?: number; // 边框大小
@@ -25,7 +135,22 @@ interface PointLayerConfig extends LayerConfig {
     size?: number; // 点大小
     color?: string; // 点颜色
     shape?: 'rectangle' | 'circle'; // 点形状 方形、圆形
-    // collides?: boolean;
+}
+interface PointCustomLayerConfig extends LayerConfig {
+    borderWidth?: number; // 边框大小
+    borderColor?: string; // 边框颜色
+    size?: number; // 点大小
+    color?: string; // 点颜色
+    shape?: 'rectangle' | 'circle'; // 点形状 方形、圆形
+    collides?: boolean;
+    // 计算所有包围框之前执行
+    beforeComputeDimension?: (ctx: any) => void;
+    // 计算每个项的包围框
+    itemDimension?: (item: any, ctx: any) => [number, number]; // [maxW,maxH]
+    // 渲染之前
+    beforeRenderAll?: (ctx: any) => void;
+    // 渲染每个
+    renderItem?: (item: any, box: {x: number; y: number; w: number; h: number}, ctx: any) => void;
 }
 interface LabelLayerConfig extends LayerConfig {
     textColor?: string; // 标签文字颜色
@@ -68,7 +193,8 @@ interface ClusterLayerConfig extends LayerConfig {
         // 格式化数字显示
         format?: (count: any) => string | number;
     };
-    beforeRender?: (item: any) => boolean; // 如果需要自定义聚合前渲染，可以配置此项，传入值为当前聚合层级的数据。显式地返回false可以阻止默认的渲染，否则默认还会被渲染
+    iconOptions?: IconLayerConfig;
+    beforeRender?: (item: any) => boolean | void; // 如果需要自定义聚合前渲染，可以配置此项，传入值为当前聚合层级的数据。显式地返回false可以阻止默认的渲染，否则默认还会被渲染
 }
 interface IconClusterLayerConfig extends LayerConfig {
     clusterRadius: number; // 聚合范围半径

@@ -59,6 +59,19 @@ type TujuPoint = number[] | BMapGL.Point;
 | BMAP_ANCHOR_BOTTOM_LEFT  | 表示控件定位于地图的左下角 |
 | BMAP_ANCHOR_BOTTOM_RIGHT | 表示控件定位于地图的右下角 |
 
+#### 控件管理
+
+```js
+ // 存储地图控件的数组
+Map.controls: BMapGL.Control[];
+// 添加控件
+Map.addControl(control: BMapGL.Control);
+// 删除控件
+Map.removeControl(control: BMapGL.Control);
+// 清除所有控件
+Map. clearControls();
+```
+
 ## 地图实例方法
 
 ### 地图缩放视角定位
@@ -100,7 +113,9 @@ type TujuPoint = number[] | BMapGL.Point;
 #### 墨卡托转经纬度
 
 `Map.mercatorToLnglat(x: number, y: number)`
+
 #### 根据当前地图级别，返回一个像素对应多少单位的平面墨卡托坐标
+
 `Map.getZoomUnits()`
 
 #### 屏幕像素位置转换为地图坐标
@@ -196,10 +211,13 @@ class Map {
 #### 多覆盖物解决方案
 
 使用`Map.createCustomOverlays`方法可以创建一个可以同时绘制多个覆盖物的图层，可一次性设置覆盖物数据，并对所包含的覆盖物进行显隐操作。该图层是`TujuMap.CustomOverlays`的实例.
-实例化`CustomOverlays`需传入的参数`createDom`函数来创建要绘制的dom元素，该函数会在每个覆盖物创建时执行一次，传入的参数为`CustomOverlaysData`的 properties 属性，实例化后需要调用`setData`来设置和更新数据，图层内部会去生成与更新覆盖物。
+实例化`CustomOverlays`需传入的参数`createDom`函数来创建要绘制的 dom 元素，该函数会在每个覆盖物创建时执行一次，传入的参数为`CustomOverlaysData`的 properties 属性，实例化后需要调用`setData`来设置和更新数据，图层内部会去生成与更新覆盖物。
 
 ```js
 interface CustomOverlaysConfig {
+    maxZoom?: number; // 最大可见级别, 默认为21
+    minZoom?: number; // 最小可见级别，默认为3
+    disableZoomControl?: boolean; // 是否禁用地图缩放显隐控制，默认为false
     containerStyle?: Record<string, string>; // 最外层容器的样式，可通过此处设置偏移量等
     enableDraggingMap?: boolean; //是否可以在覆盖物位置拖拽地图
 }
@@ -217,6 +235,9 @@ declare class CustomOverlays {
     getCustomOverlays(); // Array<CustomOverlay> 获取当前图层所有的自定义覆盖物
     addEventListener(type: string, listener: (e: any) => void);
     removeEventListener(type: string, listener: (e: any) => void);
+    destroy(); // 销毁该实例的状态
+    disableZoomControl(); // 禁用缩放级别显隐控制
+    enableZoomControl(); // 启用缩放级别显隐控制
 }
 ```
 

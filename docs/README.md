@@ -38,7 +38,7 @@ const TujuMap = require('tuju-map');
 开始使用需要进行初始化，加载相关的脚本资源，该方法为异步函数，返回 Promise 对象
 
 ```js
-TujuMap.init(params: {type?: 'BMapGL', ak: string})
+TujuMap.init(params: {type?: 'BMapGL', ak?: string, baseUrl?: string})
 ```
 
-其中 type 为要加载的基础地图类型，目前只有百度地图，此参数可缺省；ak 为地图脚本加载所需，百度地图需[申请](https://lbsyun.baidu.com/faq/search?id=299&title=677)。
+其中 type 为要加载的基础地图类型，目前只有百度地图，此参数可缺省；ak 为地图脚本加载所需，百度地图需[申请](https://lbsyun.baidu.com/faq/search?id=299&title=677)。baseUrl用于离线化时请求本地的脚本链接，此时ak不必传，公网正常使用时忽略该参数。

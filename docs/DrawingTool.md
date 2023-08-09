@@ -15,14 +15,15 @@ constructor(map: BMapGL.Map, config?: DrawConfig);
 
 // DrawConfig内容
 interface DrawConfig {
-    enableEdit?: boolean;
-    enableDrawingTool?: boolean;
-    drawingToolOptions?: {
+    enableEdit?: boolean; // 是否开启二次编辑
+    enableDrawingTool?: boolean; // 是否显示工具栏
+    drawingToolOptions?: { // 工具栏配置
         anchor?: number;
         scale?: number;
         drawingModes?: string[];
         offset?: number[];
     };
+    enableAutoViewport: boolean; // 是否开启绘制完成时的自动缩放定位
     enableCalculate?: boolean; // 绘制是否进行测距(画线时候)、测面(画圆、多边形、矩形)
     enableSorption?: boolean; // 是否开启边界吸附功能
     sorptionDistance?: number; // 边界吸附距离
@@ -61,8 +62,10 @@ Draw.drawPolyline();
 Draw.drawPolygon();
 Draw.drawCircle();
 Draw.drawRectangle();
- // 是否开启绘制
-Draw.isOpen()
+// 更新配置参数
+Draw.updateConfig(newCofig: DrawConfig)
+// 是否开启绘制
+Draw.isOpen();
 // 清空覆盖物
 Draw.clear();
 // 绘制过程中取消

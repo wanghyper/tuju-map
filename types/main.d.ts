@@ -5,8 +5,16 @@
 /// <reference path="Draw.d.ts"/>
 /// <reference path="Route.d.ts"/>
 /// <reference path="LocalSearch.d.ts"/>
-declare module 'tuju-map' {
-    function init(params: {ak?: string; authConfig?: AuthConfig; type?: 'BMapGL'; baseUrl?: string}): Promise<Map>;
+export as namespace TujuMap;
+export = TujuMap;
+declare namespace TujuMap {
+    function init(params: {
+        ak?: string;
+        authConfig?: AuthConfig;
+        type?: 'BMapGL';
+        baseUrl?: string;
+        serverUrl?: string;
+    }): Promise<Map>;
     const DRAWTYPES: {
         marker: BMapGL.DrawingType;
         polyline: BMapGL.DrawingType;
@@ -14,37 +22,17 @@ declare module 'tuju-map' {
         polygon: BMapGL.DrawingType;
         circle: BMapGL.DrawingType;
     };
-    const LayerTypes: {
-        POINT: 1;
-        LINE: 2;
-        POLYGON: 3;
-        ICON: 4;
-        TEXT: 5;
-        LABEL: 6;
-        CLUSTER: 7;
-        HEATMAP: 8;
-        GRID: 9;
-        HONEYCOMB: 10;
-    };
-    const TujuLayerTypes: {
-        POINT: 1;
-        LINE: 2;
-        POLYGON: 3;
-    };
-    // 样式类型（默认样式：0；分类样式：1；分段样式：2；热力图：3；网格图：4；蜂巢图：5；聚合样式：6）
-    const StyleTypes: {
-        default: 0;
-        classify: 1;
-        segment: 2;
-        heat: 3;
-        grid: 4;
-        honeycomb: 5;
-        cluster: 7;
-        migrate: 6;
-    };
     class Map {
+        params: MapParamas; // 初始化参数
         baseMap: BMapGL.Map; // 基础地图对像
+        controls: BMapGL.Control[]; // 存储地图控件的数组
         constructor(container: string | HTMLElement, params: MapParamas);
+        // 添加控件
+        addControl(control: BMapGL.Control);
+        // 删除控件
+        removeControl(control: BMapGL.Control);
+        // 清除所有控件
+        clearControls();
         // 底图样式设置
         setMapStyleV2(style: BMapGL.MapStyleV2): void;
         // 覆盖物
@@ -74,7 +62,7 @@ declare module 'tuju-map' {
         drawCustomOverlay(point: TujuPoint, html: HTMLElement | string, style?: any): BMapGL.Overlay;
         drawHtml(point: TujuPoint, content: (() => HTMLElement) | HTMLElement, config?: any): BMapGL.CustomOverlay;
         // 创建多覆盖物图层
-        createCustomOverlays(createDom: (config: any) => HTMLElement, options?: CustomOverlaysConfig): CustomOverlays
+        createCustomOverlays(createDom: (config: any) => HTMLElement, options?: CustomOverlaysConfig): CustomOverlays;
         // 创建信息窗
         createInfoWindow(content: string | HTMLElement, config?: BMapGL.InfoWindowOptions): BMapGL.InfoWindow;
         // 打开目标信息框
@@ -96,7 +84,7 @@ declare module 'tuju-map' {
         addEventListener(event: string, handler: BMapGL.Callback): void;
         removeEventListener(event: string, handler: BMapGL.Callback): void;
         // 室内图
-        createIndoorRoute(config?: {server: string});
+        createIndoorRoute(config?: {server: string; headers?: Record<string, any>});
         getIndoorManager();
         getIndoorInfo();
         showIndoor(uid: string, index: number): void;
@@ -141,8 +129,61 @@ declare module 'tuju-map' {
             options?: BMapGL.PolylineOptions & TrackAnimationOptions
         ): TrackAnimation;
     }
-    CustomOverlay;
-    CustomOverlays;
+    class PlatfomMap {
+        constructor(
+            map: Map,
+            config: {
+                mapId: number;
+                releaseId: number;
+            }
+        );
+        // 加载平台地图
+        load(filter?: ((listItem: LayerListResponse) => boolean) | undefined): Promise<TujuLayer[]>;
+        // 加载图层列表数据
+        loadLayerList(filter?: ((listItem: LayerListResponse) => boolean) | undefined): Promise<LayerListResponse[]>;
+        // 显示地图图层要素数据详情，通过传入一个createDom函数来创建对应的dom元素
+        showDetailPanel(
+            data: {
+                layerId: number;
+                id: number;
+            },
+            createDom: (data: any) => HTMLElement | void
+        ): Promise<void>;
+        closeDetailPanel(): void;
+        getLayerList(): LayerListResponse[];
+        getLayerById(layerId: number): TujuLayer | undefined;
+        getLayers(): TujuLayer[];
+        clearLayers();
+        addLayer(layer: TujuLayer): void;
+        addLayers(layers: TujuLayer[]): void;
+        removeLayer(layer: TujuLayer): void;
+        boxSearch(params: {
+            gridLocation: string;
+            layerIds?: number[];
+            pageSize?: number;
+            pageNo?: number;
+        }): Promise<any>;
+    }
+    class CustomOverlay {
+        constructor(point: TujuPoint, content: HTMLElement | string, config?: CustomOverlayConfig);
+        addEventListener(type: string, listener: (e: any) => void): void; // 添加事件监听器
+        removeEventListener(type: string, listener: (e: any) => void): void; // 移除事件监听器
+    }
+    class CustomOverlays {
+        overlay: BMapGL.CustomHtmlLayer;
+        constructor(map: BMapGL.Map, createDom: (config: any) => HTMLElement, options?: CustomOverlaysConfig);
+        setData(data: CustomOverlaysData); // 设置覆盖物数据，会自动刷新每个覆盖物的内容
+        show(); //  显示覆盖物
+        hide(); //  隐藏覆盖物
+        removeOverlay(cusItem: CustomOverlay); //  移除覆盖物
+        removeAllOverlays(); // 删除该图层上所有的覆盖物（不释放图层实例）
+        getCustomOverlays(); // Array<CustomOverlay> 获取当前图层所有的自定义覆盖物
+        addEventListener(type: string, listener: (e: any) => void);
+        removeEventListener(type: string, listener: (e: any) => void);
+        destroy(); // 销毁该实例的状态
+        disableZoomControl(); // 禁用缩放级别显隐控制
+        enableZoomControl(); // 启用缩放级别显隐控制
+    }
     class Viewer {
         constructor(params: {map: Map});
         add<T>(layer: T): T;
@@ -153,6 +194,8 @@ declare module 'tuju-map' {
     }
     class PointLayer implements Layer {
         constructor(config: PointLayerConfig);
+        name: string;
+        originData: any[];
         setData(data: PointLayerData[]);
         setConfig(config: PointLayerConfig);
         flyToViewport(config?: ViewportConfig);
@@ -161,6 +204,8 @@ declare module 'tuju-map' {
     }
     class LineLayer implements Layer {
         constructor(config: LineLayerConfig);
+        name: string;
+        originData: any[];
         setData(data: LineLayerData[]);
         setConfig(config: LineLayerConfig);
         flyToViewport(config?: ViewportConfig);
@@ -169,6 +214,8 @@ declare module 'tuju-map' {
     }
     class PolygonLayer implements Layer {
         constructor(config: PolygonLayerConfig);
+        name: string;
+        originData: any[];
         setData(data: PolygonLayerData[]);
         setConfig(config: PolygonLayerConfig);
         flyToViewport(config?: ViewportConfig);
@@ -177,6 +224,8 @@ declare module 'tuju-map' {
     }
     class IconLayer implements Layer {
         constructor(config: IconLayerConfig);
+        name: string;
+        originData: any[];
         setData(data: IconLayerData[]);
         setConfig(config: IconLayerConfig);
         flyToViewport(config?: ViewportConfig);
@@ -185,6 +234,8 @@ declare module 'tuju-map' {
     }
     class TextLayer implements Layer {
         constructor(config: TextLayerConfig);
+        name: string;
+        originData: any[];
         setData(data: TextLayerData[]);
         setConfig(config: TextLayerConfig);
         flyToViewport(config?: ViewportConfig);
@@ -193,6 +244,8 @@ declare module 'tuju-map' {
     }
     class LabelLayer implements Layer {
         constructor(config: LabelLayerConfig);
+        name: string;
+        originData: any[];
         setData(data: LabelLayerData[]);
         setConfig(config: LabelLayerConfig);
         flyToViewport(config?: ViewportConfig);
@@ -201,6 +254,8 @@ declare module 'tuju-map' {
     }
     class ClusterLayer implements Layer {
         constructor(config: ClusterLayerConfig);
+        name: string;
+        originData: any[];
         setData(data: ClusterLayerData[]);
         setConfig(config: ClusterLayerConfig);
         flyToViewport(config?: ViewportConfig);
@@ -210,6 +265,8 @@ declare module 'tuju-map' {
     }
     class IconClusterLayer implements Layer {
         constructor(config: IconClusterLayerConfig);
+        name: string;
+        originData: any[];
         setData(data: IconClusterLayerData[]);
         setConfig(config: IconClusterLayerConfig);
         flyToViewport(config?: ViewportConfig);
@@ -219,6 +276,8 @@ declare module 'tuju-map' {
     }
     class HeatmapLayer implements Layer {
         constructor(config: HeatmapLayerConfig);
+        name: string;
+        originData: any[];
         setData(data: HeatmapLayerData[]);
         setConfig(config: HeatmapLayerConfig);
         flyToViewport(config?: ViewportConfig);
@@ -227,42 +286,14 @@ declare module 'tuju-map' {
     }
     class GridLayer implements Layer {
         constructor(config: GridLayerConfig);
+        name: string;
+        originData: any[];
         setData(data: GridLayerData[]);
         setConfig(config: GridLayerConfig);
         flyToViewport(config?: ViewportConfig);
         show(): void;
         hide(): void;
     }
-    const API: {
-        baseUrl: string;
-        getTocken(config: AuthConfig): Promise<APIResponse>;
-        getLayerListByMapId(mapId: number): Promise<APIResponse>;
-        getLayerData(params: {mapId: number; layerId: number}): Promise<APIResponse>;
-        getLayerStyle(params: {mapId: number; layerNames?: string[]; layerIds?: number[]}): Promise<any[]>;
-        searchBox(params: {
-            mapId: number;
-            gridLocation: string;
-            layerIds?: number[];
-            layerName?: string[];
-            type?: number;
-            pageNo?: number;
-            pageSize?: number;
-            screenQo?: any;
-        }): Promise<APIResponse>;
-        getIndoorRoutes(
-            start: {
-                x: number;
-                y: number;
-                floor: string;
-            },
-            end: {
-                x: number;
-                y: number;
-                floor: string;
-            },
-            server?: string
-        ): Promise<APIResponse>;
-    };
     const GeoUtils: {
         /**
          * 判断点是否在矩形内
