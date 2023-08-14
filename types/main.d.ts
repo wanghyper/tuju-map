@@ -129,7 +129,7 @@ declare namespace TujuMap {
             options?: BMapGL.PolylineOptions & TrackAnimationOptions
         ): TrackAnimation;
     }
-    class PlatfomMap {
+    class PlatformMap {
         constructor(
             map: Map,
             config: {
@@ -163,6 +163,8 @@ declare namespace TujuMap {
             pageSize?: number;
             pageNo?: number;
         }): Promise<any>;
+        // 图层要素点击事件
+        onLayerClick(e: LayerData): void;
     }
     class CustomOverlay {
         constructor(point: TujuPoint, content: HTMLElement | string, config?: CustomOverlayConfig);

@@ -69,7 +69,7 @@ Map.addControl(control: BMapGL.Control);
 // 删除控件
 Map.removeControl(control: BMapGL.Control);
 // 清除所有控件
-Map. clearControls();
+Map.clearControls();
 ```
 
 ## 地图实例方法
