@@ -1,6 +1,6 @@
 {
     "name": "tuju-map",
-    "version": "0.0.25",
+    "version": "0.0.27",
     "description": "图聚前端能力SDK",
     "keywords": [
         "map",

@@ -99,6 +99,7 @@ declare class CustomOverlay {
     constructor(point: TujuPoint, content: HTMLElement | string, config?: CustomOverlayConfig);
     addEventListener(type: string, listener: (e: any) => void): void; // 添加事件监听器
     removeEventListener(type: string, listener: (e: any) => void): void; // 移除事件监听器
+    setPoint(point: TujuPoint): void; // 设置覆盖物位置
 }
 declare class CustomOverlays {
     overlay: BMapGL.CustomHtmlLayer;
