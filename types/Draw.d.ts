@@ -23,6 +23,7 @@ declare class Draw {
 interface DrawConfig {
     enableEdit?: boolean; // 是否开启二次编辑
     enableDrawingTool?: boolean; // 是否显示工具栏
+    enableEdgeMove?: boolean; // 是否开启绘制时鼠标到地图边缘，自动平移地图
     drawingToolOptions?: { // 工具栏配置
         anchor?: number;
         scale?: number;
